@@ -1,0 +1,1088 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <title>Towards Remote Procedure Call Encryption By Default </title>
+
+  <style type="text/css" title="Xml2Rfc (sans serif)">
+  /*<![CDATA[*/
+	  a {
+	  text-decoration: none;
+	  }
+      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+      a.info {
+          /* This is the key. */
+          position: relative;
+          z-index: 24;
+          text-decoration: none;
+      }
+      a.info:hover {
+          z-index: 25;
+          color: #FFF; background-color: #900;
+      }
+      a.info span { display: none; }
+      a.info:hover span.info {
+          /* The span will display just on :hover state. */
+          display: block;
+          position: absolute;
+          font-size: smaller;
+          top: 2em; left: -5em; width: 15em;
+          padding: 2px; border: 1px solid #333;
+          color: #900; background-color: #EEE;
+          text-align: left;
+      }
+	  a.smpl {
+	  color: black;
+	  }
+	  a:hover {
+	  text-decoration: underline;
+	  }
+	  a:active {
+	  text-decoration: underline;
+	  }
+	  address {
+	  margin-top: 1em;
+	  margin-left: 2em;
+	  font-style: normal;
+	  }
+	  body {
+	  color: black;
+	  font-family: verdana, helvetica, arial, sans-serif;
+	  font-size: 10pt;
+	  max-width: 55em;
+	  
+	  }
+	  cite {
+	  font-style: normal;
+	  }
+	  dd {
+	  margin-right: 2em;
+	  }
+	  dl {
+	  margin-left: 2em;
+	  }
+	
+	  ul.empty {
+	  list-style-type: none;
+	  }
+	  ul.empty li {
+	  margin-top: .5em;
+	  }
+	  dl p {
+	  margin-left: 0em;
+	  }
+	  dt {
+	  margin-top: .5em;
+	  }
+	  h1 {
+	  font-size: 14pt;
+	  line-height: 21pt;
+	  page-break-after: avoid;
+	  }
+	  h1.np {
+	  page-break-before: always;
+	  }
+	  h1 a {
+	  color: #333333;
+	  }
+	  h2 {
+	  font-size: 12pt;
+	  line-height: 15pt;
+	  page-break-after: avoid;
+	  }
+	  h3, h4, h5, h6 {
+	  font-size: 10pt;
+	  page-break-after: avoid;
+	  }
+	  h2 a, h3 a, h4 a, h5 a, h6 a {
+	  color: black;
+	  }
+	  img {
+	  margin-left: 3em;
+	  }
+	  li {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol p {
+	  margin-left: 0em;
+	  }
+	  p {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  pre {
+	  margin-left: 3em;
+	  background-color: lightyellow;
+	  padding: .25em;
+	  }
+	  pre.text2 {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f0f0f0;
+	  width: 69em;
+	  }
+	  pre.inline {
+	  background-color: white;
+	  padding: 0em;
+	  }
+	  pre.text {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  width: 69em;
+	  }
+	  pre.drawing {
+	  border-style: solid;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  padding: 2em;
+	  }
+	  table {
+	  margin-left: 2em;
+	  }
+	  table.tt {
+	  vertical-align: top;
+	  }
+	  table.full {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.headers {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.tt td {
+	  vertical-align: top;
+	  }
+	  table.full td {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.tt th {
+	  vertical-align: top;
+	  }
+	  table.full th {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.headers th {
+	  border-style: none none inset none;
+	  border-width: 1px;
+	  }
+	  table.left {
+	  margin-right: auto;
+	  }
+	  table.right {
+	  margin-left: auto;
+	  }
+	  table.center {
+	  margin-left: auto;
+	  margin-right: auto;
+	  }
+	  caption {
+	  caption-side: bottom;
+	  font-weight: bold;
+	  font-size: 9pt;
+	  margin-top: .5em;
+	  }
+	
+	  table.header {
+	  border-spacing: 1px;
+	  width: 95%;
+	  font-size: 10pt;
+	  color: white;
+	  }
+	  td.top {
+	  vertical-align: top;
+	  }
+	  td.topnowrap {
+	  vertical-align: top;
+	  white-space: nowrap; 
+	  }
+	  table.header td {
+	  background-color: gray;
+	  width: 50%;
+	  }
+	  table.header a {
+	  color: white;
+	  }
+	  td.reference {
+	  vertical-align: top;
+	  white-space: nowrap;
+	  padding-right: 1em;
+	  }
+	  thead {
+	  display:table-header-group;
+	  }
+	  ul.toc, ul.toc ul {
+	  list-style: none;
+	  margin-left: 1.5em;
+	  margin-right: 0em;
+	  padding-left: 0em;
+	  }
+	  ul.toc li {
+	  line-height: 150%;
+	  font-weight: bold;
+	  font-size: 10pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  ul.toc li li {
+	  line-height: normal;
+	  font-weight: normal;
+	  font-size: 9pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  li.excluded {
+	  font-size: 0pt;
+	  }
+	  ul p {
+	  margin-left: 0em;
+	  }
+	
+	  .comment {
+	  background-color: yellow;
+	  }
+	  .center {
+	  text-align: center;
+	  }
+	  .error {
+	  color: red;
+	  font-style: italic;
+	  font-weight: bold;
+	  }
+	  .figure {
+	  font-weight: bold;
+	  text-align: center;
+	  font-size: 9pt;
+	  }
+	  .filename {
+	  color: #333333;
+	  font-weight: bold;
+	  font-size: 12pt;
+	  line-height: 21pt;
+	  text-align: center;
+	  }
+	  .fn {
+	  font-weight: bold;
+	  }
+	  .hidden {
+	  display: none;
+	  }
+	  .left {
+	  text-align: left;
+	  }
+	  .right {
+	  text-align: right;
+	  }
+	  .title {
+	  color: #990000;
+	  font-size: 18pt;
+	  line-height: 18pt;
+	  font-weight: bold;
+	  text-align: center;
+	  margin-top: 36pt;
+	  }
+	  .vcardline {
+	  display: block;
+	  }
+	  .warning {
+	  font-size: 14pt;
+	  background-color: yellow;
+	  }
+	
+	
+	  @media print {
+	  .noprint {
+		display: none;
+	  }
+	
+	  a {
+		color: black;
+		text-decoration: none;
+	  }
+	
+	  table.header {
+		width: 90%;
+	  }
+	
+	  td.header {
+		width: 50%;
+		color: black;
+		background-color: white;
+		vertical-align: top;
+		font-size: 12pt;
+	  }
+	
+	  ul.toc a::after {
+		content: leader('.') target-counter(attr(href), page);
+	  }
+	
+	  ul.ind li li a {
+		content: target-counter(attr(href), page);
+	  }
+	
+	  .print2col {
+		column-count: 2;
+		-moz-column-count: 2;
+		column-fill: auto;
+	  }
+	  }
+	
+	  @page {
+	  @top-left {
+		   content: "Internet-Draft"; 
+	  } 
+	  @top-right {
+		   content: "December 2010"; 
+	  } 
+	  @top-center {
+		   content: "Abbreviated Title";
+	  } 
+	  @bottom-left {
+		   content: "Doe"; 
+	  } 
+	  @bottom-center {
+		   content: "Expires June 2011"; 
+	  } 
+	  @bottom-right {
+		   content: "[Page " counter(page) "]"; 
+	  } 
+	  }
+	
+	  @page:first { 
+		@top-left {
+		  content: normal;
+		}
+		@top-right {
+		  content: normal;
+		}
+		@top-center {
+		  content: normal;
+		}
+	  }
+  /*]]>*/
+  </style>
+
+  <link href="#rfc.toc" rel="Contents">
+<link href="#rfc.section.1" rel="Chapter" title="1 Introduction">
+<link href="#rfc.section.2" rel="Chapter" title="2 Requirements Language">
+<link href="#rfc.section.3" rel="Chapter" title="3 Terminology">
+<link href="#rfc.section.4" rel="Chapter" title="4 RPC-Over-TLS in Operation">
+<link href="#rfc.section.4.1" rel="Chapter" title="4.1 Discovering Server-side TLS Support">
+<link href="#rfc.section.4.2" rel="Chapter" title="4.2 Authentication">
+<link href="#rfc.section.4.2.1" rel="Chapter" title="4.2.1 Using TLS with RPCSEC GSS">
+<link href="#rfc.section.5" rel="Chapter" title="5 TLS Requirements">
+<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Base Transport Considerations">
+<link href="#rfc.section.5.1.1" rel="Chapter" title="5.1.1 Operation on TCP">
+<link href="#rfc.section.5.1.2" rel="Chapter" title="5.1.2 Operation on UDP">
+<link href="#rfc.section.5.1.3" rel="Chapter" title="5.1.3 Operation on Other Transports">
+<link href="#rfc.section.5.2" rel="Chapter" title="5.2 TLS Peer Authentication">
+<link href="#rfc.section.5.2.1" rel="Chapter" title="5.2.1 X.509 Certificates Using PKIX trust">
+<link href="#rfc.section.5.2.2" rel="Chapter" title="5.2.2 X.509 Certificates Using Fingerprints">
+<link href="#rfc.section.5.2.3" rel="Chapter" title="5.2.3 Pre-Shared Keys">
+<link href="#rfc.section.5.2.4" rel="Chapter" title="5.2.4 Token Binding">
+<link href="#rfc.section.6" rel="Chapter" title="6 Implementation Status">
+<link href="#rfc.section.6.1" rel="Chapter" title="6.1 DESY NFS server">
+<link href="#rfc.section.6.2" rel="Chapter" title="6.2 Hammerspace NFS server">
+<link href="#rfc.section.6.3" rel="Chapter" title="6.3 Linux NFS server and client">
+<link href="#rfc.section.6.4" rel="Chapter" title="6.4 FreeBSD NFS server and client">
+<link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations">
+<link href="#rfc.section.7.1" rel="Chapter" title="7.1 Limitations of an Opportunistic Approach">
+<link href="#rfc.section.7.1.1" rel="Chapter" title="7.1.1 STRIPTLS Attacks">
+<link href="#rfc.section.7.2" rel="Chapter" title="7.2 TLS Identity Management on Clients">
+<link href="#rfc.section.7.3" rel="Chapter" title="7.3 Security Considerations for AUTH_SYS on TLS">
+<link href="#rfc.section.7.4" rel="Chapter" title="7.4 Best Security Policy Practices">
+<link href="#rfc.section.8" rel="Chapter" title="8 IANA Considerations">
+<link href="#rfc.references" rel="Chapter" title="9 References">
+<link href="#rfc.references.1" rel="Chapter" title="9.1 Normative References">
+<link href="#rfc.references.2" rel="Chapter" title="9.2 Informative References">
+<link href="#rfc.appendix.A" rel="Chapter" title="A Known Weaknesses of the AUTH_SYS Authentication Flavor">
+<link href="#rfc.acknowledgments" rel="Chapter">
+<link href="#rfc.authors" rel="Chapter">
+
+
+  <meta name="generator" content="xml2rfc version 2.40.1 - https://tools.ietf.org/tools/xml2rfc" />
+  <link rel="schema.dct" href="http://purl.org/dc/terms/" />
+
+  <meta name="dct.creator" content="Myklebust, T. and C. Lever, Ed." />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-nfsv4-rpc-tls-latest" />
+  <meta name="dct.issued" scheme="ISO8601" content="2020-03" />
+  <meta name="dct.abstract" content="This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.   " />
+  <meta name="description" content="This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.   " />
+
+</head>
+
+<body>
+
+  <table class="header">
+    <tbody>
+    
+    	<tr>
+<td class="left">Network File System Version 4</td>
+<td class="right">T. Myklebust</td>
+</tr>
+<tr>
+<td class="left">Internet-Draft</td>
+<td class="right">Hammerspace</td>
+</tr>
+<tr>
+<td class="left">Updates: 5531 (if approved)</td>
+<td class="right">C. Lever, Ed.</td>
+</tr>
+<tr>
+<td class="left">Intended status: Standards Track</td>
+<td class="right">Oracle</td>
+</tr>
+<tr>
+<td class="left">Expires: September 4, 2020</td>
+<td class="right">March 3, 2020</td>
+</tr>
+
+    	
+    </tbody>
+  </table>
+
+  <p class="title">Towards Remote Procedure Call Encryption By Default <br />
+  <span class="filename">draft-ietf-nfsv4-rpc-tls-latest</span></p>
+  
+  <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
+<p>This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.  </p>
+<h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
+<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
+<p>This Internet-Draft will expire on September 4, 2020.</p>
+<h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
+<p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+<p>This document may contain material from IETF Documents or IETF Contributions published or made publicly available before November 10, 2008.  The person(s) controlling the copyright in some of this material may not have granted the IETF Trust the right to allow modifications of such material outside the IETF Standards Process. Without obtaining an adequate license from the person(s) controlling the copyright in such materials, this document may not be modified outside the IETF Standards Process, and derivative works of it may not be created outside the IETF Standards Process, except to format it for publication as an RFC or to translate it into languages other than English.</p>
+
+  
+  <hr class="noprint" />
+  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="#rfc.section.1">Introduction</a>
+</li>
+<li>2.   <a href="#rfc.section.2">Requirements Language</a>
+</li>
+<li>3.   <a href="#rfc.section.3">Terminology</a>
+</li>
+<li>4.   <a href="#rfc.section.4">RPC-Over-TLS in Operation</a>
+</li>
+<ul><li>4.1.   <a href="#rfc.section.4.1">Discovering Server-side TLS Support</a>
+</li>
+<li>4.2.   <a href="#rfc.section.4.2">Authentication</a>
+</li>
+<ul><li>4.2.1.   <a href="#rfc.section.4.2.1">Using TLS with RPCSEC GSS</a>
+</li>
+</ul></ul><li>5.   <a href="#rfc.section.5">TLS Requirements</a>
+</li>
+<ul><li>5.1.   <a href="#rfc.section.5.1">Base Transport Considerations</a>
+</li>
+<ul><li>5.1.1.   <a href="#rfc.section.5.1.1">Operation on TCP</a>
+</li>
+<li>5.1.2.   <a href="#rfc.section.5.1.2">Operation on UDP</a>
+</li>
+<li>5.1.3.   <a href="#rfc.section.5.1.3">Operation on Other Transports</a>
+</li>
+</ul><li>5.2.   <a href="#rfc.section.5.2">TLS Peer Authentication</a>
+</li>
+<ul><li>5.2.1.   <a href="#rfc.section.5.2.1">X.509 Certificates Using PKIX trust</a>
+</li>
+<li>5.2.2.   <a href="#rfc.section.5.2.2">X.509 Certificates Using Fingerprints</a>
+</li>
+<li>5.2.3.   <a href="#rfc.section.5.2.3">Pre-Shared Keys</a>
+</li>
+<li>5.2.4.   <a href="#rfc.section.5.2.4">Token Binding</a>
+</li>
+</ul></ul><li>6.   <a href="#rfc.section.6">Implementation Status</a>
+</li>
+<ul><li>6.1.   <a href="#rfc.section.6.1">DESY NFS server</a>
+</li>
+<li>6.2.   <a href="#rfc.section.6.2">Hammerspace NFS server</a>
+</li>
+<li>6.3.   <a href="#rfc.section.6.3">Linux NFS server and client</a>
+</li>
+<li>6.4.   <a href="#rfc.section.6.4">FreeBSD NFS server and client</a>
+</li>
+</ul><li>7.   <a href="#rfc.section.7">Security Considerations</a>
+</li>
+<ul><li>7.1.   <a href="#rfc.section.7.1">Limitations of an Opportunistic Approach</a>
+</li>
+<ul><li>7.1.1.   <a href="#rfc.section.7.1.1">STRIPTLS Attacks</a>
+</li>
+</ul><li>7.2.   <a href="#rfc.section.7.2">TLS Identity Management on Clients</a>
+</li>
+<li>7.3.   <a href="#rfc.section.7.3">Security Considerations for AUTH_SYS on TLS</a>
+</li>
+<li>7.4.   <a href="#rfc.section.7.4">Best Security Policy Practices</a>
+</li>
+</ul><li>8.   <a href="#rfc.section.8">IANA Considerations</a>
+</li>
+<li>9.   <a href="#rfc.references">References</a>
+</li>
+<ul><li>9.1.   <a href="#rfc.references.1">Normative References</a>
+</li>
+<li>9.2.   <a href="#rfc.references.2">Informative References</a>
+</li>
+</ul><li>Appendix A.   <a href="#rfc.appendix.A">Known Weaknesses of the AUTH_SYS Authentication Flavor</a>
+</li>
+<li><a href="#rfc.acknowledgments">Acknowledgments</a>
+</li>
+<li><a href="#rfc.authors">Authors' Addresses</a>
+</li>
+
+
+  </ul>
+
+  <h1 id="rfc.section.1">
+<a href="#rfc.section.1">1.</a> <a href="#section:8F035331-8EB8-4FBC-973A-673FBA5FE952" id="section:8F035331-8EB8-4FBC-973A-673FBA5FE952">Introduction</a>
+</h1>
+<p id="rfc.section.1.p.1">In 2014 the IETF published <a href="#RFC7258" class="xref">[RFC7258]</a>, which recognized that unauthorized observation of network traffic had become widespread and was a subversive threat to all who make use of the Internet at large.  It strongly recommended that newly defined Internet protocols should make a genuine effort to mitigate monitoring attacks.  Typically this mitigation is done by encrypting data in transit.  </p>
+<p id="rfc.section.1.p.2">The Remote Procedure Call version 2 protocol has been a Proposed Standard for three decades (see <a href="#RFC5531" class="xref">[RFC5531]</a> and its antecedents).  Over twenty years ago, Eisler et al. first introduced RPCSEC GSS as an in-transit encryption mechanism for RPC <a href="#RFC2203" class="xref">[RFC2203]</a>.  However, experience has shown that RPCSEC GSS with in-transit encryption can be challenging to use in practice: </p>
+
+<ul>
+<li>Parts of each RPC header remain in clear-text, constituting a significant security exposure.  </li>
+<li>Offloading GSS privacy is not practical in large multi-user deployments since each message is encrypted using a key based on the issuing RPC user.  </li>
+</ul>
+
+<p> However strong a privacy service is, it cannot provide any security if the challenges of using it result in choosing not to deploy it at all.  </p>
+<p id="rfc.section.1.p.3">Moreover, the use of AUTH_SYS remains common despite the adverse effects that acceptance of UIDs and GIDs from unauthenticated clients brings with it.  Continued use is in part because: </p>
+
+<ul>
+<li>Per-client deployment and administrative costs are not scalable.  Administrators must provide keying material for each RPC client, including transient clients.  </li>
+<li>Host identity management and user identity management must be enforced in the same security realm.  In certain environments, different authorities might be responsible for provisioning client systems versus provisioning new users.  </li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.1.p.4">The alternative described in the current document is to employ a transport layer security mechanism that can protect the privacy of each RPC connection transparently to RPC and upper-layer protocols.  The Transport Layer Security protocol <a href="#RFC8446" class="xref">[RFC8446]</a> (TLS) is a well-established Internet building block that protects many standard Internet protocols such as the Hypertext Transport Protocol (HTTP) <a href="#RFC2818" class="xref">[RFC2818]</a>.  </p>
+<p id="rfc.section.1.p.5">Encrypting at the RPC transport layer accords several significant benefits: </p>
+
+<dl>
+<dt>Encryption By Default:</dt>
+<dd style="margin-left: 8">Transport encryption can be enabled without additional administrative tasks such as identifying client systems to a trust authority, generating additional keying material, or provisioning a secure network tunnel.  </dd>
+<dt>Encryption Offload:</dt>
+<dd style="margin-left: 8">Hardware support for GSS privacy has not appeared in the marketplace.  However, the use of a well-established transport encryption mechanism that is employed by other ubiquitous network protocols makes it more likely that encryption offload for RPC is practicable.  </dd>
+<dt>Securing AUTH_SYS:</dt>
+<dd style="margin-left: 8">Most critically, transport encryption can significantly reduce several security issues inherent in the current widespread use of AUTH_SYS (i.e., acceptance of UIDs and GIDs generated by an unauthenticated client).  </dd>
+<dt>Decoupled User and Host Identities:</dt>
+<dd style="margin-left: 8">TLS can be used to authenticate peer hosts while other security mechanisms can handle user authentication.  </dd>
+</dl>
+
+<p> </p>
+<p id="rfc.section.1.p.6">The current document specifies the implementation of RPC on an encrypted transport in a fashion that is transparent to upper-layer protocols based on RPC.  The imposition of encryption at the transport layer protects any upper-layer protocol that employs RPC, without alteration of that protocol.  </p>
+<p id="rfc.section.1.p.7">Further, the current document defines policies in line with <a href="#RFC7435" class="xref">[RFC7435]</a> which enable RPC-on-TLS to be deployed opportunistically in environments with RPC implementations that do not support TLS.  Specifications for RPC-based upper-layer protocols are free to require stricter policies to guarantee that encryption or host authentication is in use on every connection.  </p>
+<p id="rfc.section.1.p.8">The protocol specification in the current document assumes that support for RPC, TLS, PKI, GSS-API, and DNSSEC is already available in an RPC implementation where TLS support is to be added.  </p>
+<h1 id="rfc.section.2">
+<a href="#rfc.section.2">2.</a> <a href="#section:024237C9-5504-49B4-A2D3-2D2A5EFBB967" id="section:024237C9-5504-49B4-A2D3-2D2A5EFBB967">Requirements Language</a>
+</h1>
+<p id="rfc.section.2.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 <a href="#RFC2119" class="xref">[RFC2119]</a> <a href="#RFC8174" class="xref">[RFC8174]</a> when, and only when, they appear in all capitals, as shown here.  </p>
+<h1 id="rfc.section.3">
+<a href="#rfc.section.3">3.</a> <a href="#section:0EB1100E-DAA8-4B2C-98AE-94258CFDCB1B" id="section:0EB1100E-DAA8-4B2C-98AE-94258CFDCB1B">Terminology</a>
+</h1>
+<p id="rfc.section.3.p.1">This document adopts the terminology introduced in Section 3 of <a href="#RFC6973" class="xref">[RFC6973]</a> and assumes a working knowledge of the Remote Procedure Call (RPC) version 2 protocol <a href="#RFC5531" class="xref">[RFC5531]</a> and the Transport Layer Security (TLS) version 1.3 protocol <a href="#RFC8446" class="xref">[RFC8446]</a>.  </p>
+<p id="rfc.section.3.p.2">Note also that the NFS community uses the term "privacy" where other Internet communities use "confidentiality".  In the current document the two terms are synonymous.  </p>
+<p id="rfc.section.3.p.3">We adhere to the convention that a "client" is a network host that actively initiates an association, and a "server" is a network host that passively accepts an association request.  </p>
+<p id="rfc.section.3.p.4">RPC documentation historically refers to the authentication of a connecting host as "machine authentication" or "host authentication".  TLS documentation refers to the same as "peer authentication".  In the current document there is little distinction between these terms.  </p>
+<p id="rfc.section.3.p.5">The term "user authentication" in this document refers specifically to the RPC caller's credential, provided in the "cred" and "verf" fields in each RPC Call.  </p>
+<h1 id="rfc.section.4">
+<a href="#rfc.section.4">4.</a> <a href="#section:EC3FEED5-1DE0-454B-9AB3-CE47BA901583" id="section:EC3FEED5-1DE0-454B-9AB3-CE47BA901583">RPC-Over-TLS in Operation</a>
+</h1>
+<h1 id="rfc.section.4.1">
+<a href="#rfc.section.4.1">4.1.</a> <a href="#section:0A03673B-14BA-4228-8A8A-F76AA318CA73" id="section:0A03673B-14BA-4228-8A8A-F76AA318CA73">Discovering Server-side TLS Support</a>
+</h1>
+<p id="rfc.section.4.1.p.1">The mechanism described in this document interoperates fully with RPC implementations that do not support TLS.  The use of TLS is automatically disabled in these cases.  </p>
+<pre>
+&lt;CODE BEGINS&gt;
+
+enum auth_flavor {
+        AUTH_NONE       = 0,
+        AUTH_SYS        = 1,
+        AUTH_SHORT      = 2,
+        AUTH_DH         = 3,
+        AUTH_KERB       = 4,
+        AUTH_RSA        = 5,
+        RPCSEC_GSS      = 6,
+        AUTH_TLS        = 7,
+
+        /* and more to be defined */
+};
+
+&lt;CODE ENDS&gt;
+</pre>
+<p id="rfc.section.4.1.p.2">To achieve this, we introduce a new RPC authentication flavor called AUTH_TLS.  This new flavor signals that the client wants to initiate TLS negotiation if the server supports it.  Except for the modifications described in this section, the RPC protocol is unaware of security encapsulation.  </p>
+<p id="rfc.section.4.1.p.3">The flavor value of the verifier received in the reply message from the server MUST be AUTH_NONE.  The length of the verifier's body field is eight.  The bytes of the verifier's body field encode the ASCII characters "STARTTLS" as a fixed-length opaque.  </p>
+<p id="rfc.section.4.1.p.4">When an RPC client is ready to begin sending encrypted traffic to a server, it starts with a NULL RPC request with an auth_flavor of AUTH_TLS.  The NULL request is made to the same port as if TLS were not in use.  </p>
+<p id="rfc.section.4.1.p.5">The RPC server can respond in one of three ways: </p>
+
+<ul>
+<li>If the RPC server does not recognize the AUTH_TLS authentication flavor, it responds with a reject_stat of AUTH_ERROR.  The RPC client then knows that this server does not support TLS.  </li>
+<li>If the RPC server accepts the NULL RPC procedure but fails to return an AUTH_NONE verifier containing the "STARTTLS" token in the NULL Reply, the RPC client knows that this server does not support TLS.  </li>
+<li>If the RPC server accepts the NULL RPC procedure and returns an AUTH_NONE verifier containing the "STARTTLS" token in the NULL Reply, the RPC client immediately initiates a TLS session.  This NULL Reply signals that the RPC server is prepared for the client to begin TLS session negotiation.  </li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.4.1.p.6">Once the TLS handshake is complete, the RPC client and server have established a secure channel for communicating.  The client MUST switch to a security flavor other than AUTH_TLS within that channel, presumably after negotiating down redundant RPCSEC_GSS privacy and integrity services and applying channel binding <a href="#RFC7861" class="xref">[RFC7861]</a>.  </p>
+<p id="rfc.section.4.1.p.7">If TLS negotiation fails for any reason, the RPC client reports this failure to the upper-layer application the same way it would report an AUTH_ERROR rejection from the RPC server.  </p>
+<p id="rfc.section.4.1.p.8">If an RPC client attempts to use AUTH_TLS for anything other than the NULL RPC procedure, the RPC server MUST respond with a reject_stat of AUTH_ERROR.  </p>
+<h1 id="rfc.section.4.2">
+<a href="#rfc.section.4.2">4.2.</a> <a href="#section:6EDEF553-C95A-47D7-ABBA-0B537FE3A959" id="section:6EDEF553-C95A-47D7-ABBA-0B537FE3A959">Authentication</a>
+</h1>
+<p id="rfc.section.4.2.p.1">Both RPC and TLS have peer and user authentication, with some overlap in capability between RPC and TLS.  The goal of interoperability with implementations that do not support TLS requires limiting the combinations that are allowed and precisely specifying the role that each layer plays.  We also want to handle TLS such that an RPC implementation can make the use of TLS invisible to existing RPC consumer applications.  </p>
+<p id="rfc.section.4.2.p.2">Each RPC server that supports RPC-over-TLS MUST possess a unique global identity (e.g., a certificate that is signed by a well-known trust anchor).  Such an RPC server MUST request a TLS peer identity from each client upon first contact.  There are two different modes of client deployment: </p>
+
+<dl>
+<dt>Server-only Host Authentication</dt>
+<dd style="margin-left: 8">
+<br> In this type of deployment, the client can authenticate the server host using the presented server peer TLS identity, but the server cannot authenticate the client.  In this situation, RPC-over-TLS clients are anonymous.  They present no globally unique identifier to the server peer.  </dd>
+<dt>Mutual Host Authentication</dt>
+<dd style="margin-left: 8">
+<br> In this type of deployment, the client possesses a unique global identity (e.g., a certificate).  As part of the TLS handshake, both peers authenticate using the presented TLS identities.  If authentication of either peer fails, or if authorization based on those identities blocks access to the server, the peers MUST reject the association.  </dd>
+</dl>
+
+<p> </p>
+<p id="rfc.section.4.2.p.3">In either of these modes, RPC user authentication is not affected by the use of transport layer security.  When a client presents a TLS peer identity to an RPC server, the protocol extension described in the current document provides no way for the server to know whether that identity represents one RPC user on that client, or is shared amongst many RPC users.  Therefore, a server implementation must not utilize the remote TLS peer identity for RPC user authentication.  </p>
+<h1 id="rfc.section.4.2.1">
+<a href="#rfc.section.4.2.1">4.2.1.</a> <a href="#section:12D92596-F310-48C8-A4E0-B6CA038524E5" id="section:12D92596-F310-48C8-A4E0-B6CA038524E5">Using TLS with RPCSEC GSS</a>
+</h1>
+<p id="rfc.section.4.2.1.p.1">RPCSEC GSS can provide per-request integrity or privacy (also known as confidentiality) services.  When operating over a TLS session, the GSS services become redundant.  A TLS-capable RPC implementation uses GSS channel binding to determine when GSS integrity or privacy is unnecessary.  See Section 2.5 of <a href="#RFC7861" class="xref">[RFC7861]</a> for details.  </p>
+<p id="rfc.section.4.2.1.p.2">When using GSS on a TLS session, the RPC server is still required to possess a GSS service principal.  GSS mutual authentication still occurs after a TLS session has been established.  </p>
+<h1 id="rfc.section.5">
+<a href="#rfc.section.5">5.</a> <a href="#section:D93526DA-7B9D-419B-BE84-4AD8DA48577E" id="section:D93526DA-7B9D-419B-BE84-4AD8DA48577E">TLS Requirements</a>
+</h1>
+<p id="rfc.section.5.p.1">When peers negotiate a TLS session that is to transport RPC, the following restrictions apply: </p>
+
+<ul>
+<li>Implementations MUST NOT negotiate TLS versions prior to v1.3 <a href="#RFC8446" class="xref">[RFC8446]</a>.  Support for mandatory-to-implement ciphersuites for the negotiated TLS version is REQUIRED.  </li>
+<li>Implementations MUST support certificate-based mutual authentication.  Support for TLS-PSK mutual authentication <a href="#RFC4279" class="xref">[RFC4279]</a> is OPTIONAL.  See <a href="#section:6EDEF553-C95A-47D7-ABBA-0B537FE3A959" class="xref">Section 4.2</a> for further details.  </li>
+<li>Negotiation of a ciphersuite providing confidentiality as well as integrity protection is REQUIRED.  Support for and negotiation of compression is OPTIONAL.  </li>
+</ul>
+
+<p> </p>
+<h1 id="rfc.section.5.1">
+<a href="#rfc.section.5.1">5.1.</a> <a href="#section:CC204592-F561-49BD-B1C9-DE0FF7F0E7AB" id="section:CC204592-F561-49BD-B1C9-DE0FF7F0E7AB">Base Transport Considerations</a>
+</h1>
+<h1 id="rfc.section.5.1.1">
+<a href="#rfc.section.5.1.1">5.1.1.</a> <a href="#section:74B43C7E-5ADC-4FBD-B4EA-FF8F470994A8" id="section:74B43C7E-5ADC-4FBD-B4EA-FF8F470994A8">Operation on TCP</a>
+</h1>
+<p id="rfc.section.5.1.1.p.1">The use of TLS <a href="#RFC8446" class="xref">[RFC8446]</a> protects RPC on TCP connections.  Typically, once a client completes the TCP handshake and performs RPC service discovery via NULL RPC operations, it uses the mechanism described in <a href="#section:0A03673B-14BA-4228-8A8A-F76AA318CA73" class="xref">Section 4.1</a> to discover TLS support.  It can then negotiate a TLS session on that connection.  </p>
+<p id="rfc.section.5.1.1.p.2">After establishing a TLS session, an RPC server MUST reject with a reject_stat of AUTH_ERROR any subsequent RPC requests over a TLS-protected connection that are outside of a TLS session.  Likewise, an RPC client MUST silently discard any subsequent RPC replies over the connection that are outside of a TLS session.  </p>
+<p id="rfc.section.5.1.1.p.3">This restriction includes reverse-direction RPC operations (i.e., RPC calls initiated on the server-end of the connection).  An RPC client receiving a reverse-direction call on a connection outside of an existing TLS session MUST reject the request with a reject_stat of AUTH_ERROR.  </p>
+<p id="rfc.section.5.1.1.p.4">An RPC peer terminates a TLS session by sending a TLS closure alert, or by closing the TLS-protected TCP connection.  </p>
+<h1 id="rfc.section.5.1.2">
+<a href="#rfc.section.5.1.2">5.1.2.</a> <a href="#section:B8BF600E-96DC-4C82-AADF-D593826E9B75" id="section:B8BF600E-96DC-4C82-AADF-D593826E9B75">Operation on UDP</a>
+</h1>
+<p id="rfc.section.5.1.2.p.1">RPC over UDP is protected using DTLS <a href="#RFC6347" class="xref">[RFC6347]</a>.  As soon as a client initializes a socket for use with an unfamiliar server, it uses the mechanism described in <a href="#section:0A03673B-14BA-4228-8A8A-F76AA318CA73" class="xref">Section 4.1</a> to discover DTLS support and then negotiate a DTLS session.  Connected operation is RECOMMENDED.  </p>
+<p id="rfc.section.5.1.2.p.2">Using a DTLS transport does not introduce reliable or in-order semantics to RPC on UDP.  Also, DTLS does not support fragmentation of RPC messages.  Each RPC message MUST fit in a single DTLS datagram.  DTLS encapsulation has overhead, which reduces the effective Path MTU (PMTU) and thus the maximum RPC payload size.  </p>
+<p id="rfc.section.5.1.2.p.3">DTLS does not detect STARTTLS replay.  Sending a TLS closure alert terminates a DTLS session.  Subsequent RPC messages passing between the client and server are no longer protected until a new TLS session is established.  </p>
+<h1 id="rfc.section.5.1.3">
+<a href="#rfc.section.5.1.3">5.1.3.</a> <a href="#section:BFCC24B1-E6D4-4ABC-A5F3-B71E8E96878F" id="section:BFCC24B1-E6D4-4ABC-A5F3-B71E8E96878F">Operation on Other Transports</a>
+</h1>
+<p id="rfc.section.5.1.3.p.1">RPC-over-RDMA can make use of Transport Layer Security below the RDMA transport layer <a href="#RFC8166" class="xref">[RFC8166]</a>.  The exact mechanism is not within the scope of this document.  Because there might not be other provisions to exchange client and server certificates, authentication material exchange would need to be provided by facilities within a future RPC-over-RDMA transport.  </p>
+<p id="rfc.section.5.1.3.p.2">Transports that provide intrinsic TLS-level security (e.g., QUIC) would need to be addressed separately from the current document.  In such cases, the use of TLS would not be opportunistic as it is for TCP or UDP.  </p>
+<h1 id="rfc.section.5.2">
+<a href="#rfc.section.5.2">5.2.</a> <a href="#section:936921ED-67BB-46BF-B316-6740E07F6652" id="section:936921ED-67BB-46BF-B316-6740E07F6652">TLS Peer Authentication</a>
+</h1>
+<p id="rfc.section.5.2.p.1">TLS can perform peer authentication using any of the following mechanisms: </p>
+<h1 id="rfc.section.5.2.1">
+<a href="#rfc.section.5.2.1">5.2.1.</a> <a href="#section:7A68F518-2C02-4705-8218-4F13E51372F4" id="section:7A68F518-2C02-4705-8218-4F13E51372F4">X.509 Certificates Using PKIX trust</a>
+</h1>
+<p id="rfc.section.5.2.1.p.1">Implementations are REQUIRED to support this mechanism.  In this mode, the tuple (serial number of the presented certificate; Issuer) uniquely identifies the RPC peer.  </p>
+
+<ul>
+<li>Implementations MUST allow the configuration of a list of trusted Certification Authorities for incoming connections.  </li>
+<li>Certificate validation MUST include the verification rules as per <a href="#RFC5280" class="xref">[RFC5280]</a>.  </li>
+<li>Implementations SHOULD indicate their trusted Certification Authorities (CAs).  </li>
+<li>Peer validation always includes a check on whether the locally configured expected DNS name or IP address of the server that is contacted matches its presented certificate.  DNS names and IP addresses can be contained in the Common Name (CN) or subjectAltName entries.  For verification, only one of these entries is to be considered.  The following precedence applies: for DNS name validation, subjectAltName:DNS has precedence over CN; for IP address validation, subjectAltName:iPAddress has precedence over CN.  Implementors of this specification are advised to read Section 6 of <a href="#RFC6125" class="xref">[RFC6125]</a> for more details on DNS name validation.  </li>
+<li>For services accessed by their network identifiers (netids) and universal network addresses (uaddr), the iPAddress subjectAltName SHOULD be present in the certificate and must exactly match the address represented by universal address.  </li>
+<li>Implementations MAY allow the configuration of a set of additional properties of the certificate to check for a peer's authorization to communicate (e.g., a set of allowed values in subjectAltName:URI or a set of allowed X509v3 Certificate Policies).  </li>
+<li>When the configured trust base changes (e.g., removal of a CA from the list of trusted CAs; issuance of a new CRL for a given CA), implementations MAY renegotiate the TLS session to reassess the connecting peer's continued authorization.  </li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.5.2.1.p.2">Authenticating a connecting entity does not mean the RPC server necessarily wants to communicate with that client.  For example, if the Issuer is not in a trusted set of Issuers, the RPC server may decline to perform RPC transactions with this client.  Implementations that want to support a wide variety of trust models should expose as many details of the presented certificate to the administrator as possible so that the administrator can implement the trust model.  As a suggestion, at least the following parameters of the X.509 client certificate SHOULD be exposed: </p>
+
+<ul>
+<li>Originating IP address </li>
+<li>Certificate Fingerprint </li>
+<li>Issuer </li>
+<li>Subject </li>
+<li>all X509v3 Extended Key Usage </li>
+<li>all X509v3 Subject Alternative Name </li>
+<li>all X509v3 Certificate Policies </li>
+</ul>
+
+<p> </p>
+<h1 id="rfc.section.5.2.2">
+<a href="#rfc.section.5.2.2">5.2.2.</a> <a href="#section:15B9BEE9-9D2F-49B7-900E-0BA9BCE9CB27" id="section:15B9BEE9-9D2F-49B7-900E-0BA9BCE9CB27">X.509 Certificates Using Fingerprints</a>
+</h1>
+<p id="rfc.section.5.2.2.p.1">This mechanism is OPTIONAL to implement.  In this mode, the fingerprint of the presented certificate uniquely identifies the RPC peer.  </p>
+<p id="rfc.section.5.2.2.p.2">Implementations SHOULD allow the configuration of a list of trusted certificates, identified via fingerprint of the DER-encoded certificate octets.  Implementations MUST support SHA-256 <a href="#FIPS.180-4" class="xref">[FIPS.180-4]</a> or stronger as the hash algorithm for the fingerprint.  </p>
+<h1 id="rfc.section.5.2.3">
+<a href="#rfc.section.5.2.3">5.2.3.</a> <a href="#section:6DA9ED5F-BAD9-4126-95B7-E2331655A01E" id="section:6DA9ED5F-BAD9-4126-95B7-E2331655A01E">Pre-Shared Keys</a>
+</h1>
+<p id="rfc.section.5.2.3.p.1">This mechanism is OPTIONAL to implement.  In this mode, the RPC peer is uniquely identified by keying material that has been shared out-of-band or by a previous TLS-protected connection (see Section 2.2 of <a href="#RFC8446" class="xref">[RFC8446]</a>).  At least the following parameters of the TLS connection SHOULD be exposed: </p>
+
+<ul>
+<li>Originating IP address </li>
+<li>TLS Identifier </li>
+</ul>
+
+<p> </p>
+<h1 id="rfc.section.5.2.4">
+<a href="#rfc.section.5.2.4">5.2.4.</a> <a href="#section:CBA3E016-B160-4C37-85CA-8D467A6AFE83" id="section:CBA3E016-B160-4C37-85CA-8D467A6AFE83">Token Binding</a>
+</h1>
+<p id="rfc.section.5.2.4.p.1">This mechanism is OPTIONAL to implement.  In this mode, a token uniquely identifies the RPC peer.  </p>
+<p id="rfc.section.5.2.4.p.2">Versions of TLS after TLS 1.2 contain a token binding mechanism that is more secure than using certificates.  This mechanism is detailed in <a href="#RFC8471" class="xref">[RFC8471]</a>.  </p>
+<h1 id="rfc.section.6">
+<a href="#rfc.section.6">6.</a> <a href="#section:88BBA4D6-ED42-4FE6-A208-9D277B68729A" id="section:88BBA4D6-ED42-4FE6-A208-9D277B68729A">Implementation Status</a>
+</h1>
+<p id="rfc.section.6.p.1">This section records the status of known implementations of the protocol defined by this specification at the time of posting of this Internet-Draft, and is based on a proposal described in <a href="#RFC7942" class="xref">[RFC7942]</a>.  The description of implementations in this section is intended to assist the IETF in its decision processes in progressing drafts to RFCs.  </p>
+<p id="rfc.section.6.p.2">Please note that the listing of any individual implementation here does not imply endorsement by the IETF.  Furthermore, no effort has been spent to verify the information presented here that was supplied by IETF contributors.  This is not intended as, and must not be construed to be, a catalog of available implementations or their features.  Readers are advised to note that other implementations may exist.  </p>
+<h1 id="rfc.section.6.1">
+<a href="#rfc.section.6.1">6.1.</a> <a href="#section:94AA7844-E393-4353-A35D-DA01D13C909B" id="section:94AA7844-E393-4353-A35D-DA01D13C909B">DESY NFS server</a>
+</h1>
+<p></p>
+
+<dl>
+<dt>Organization:</dt>
+<dd style="margin-left: 11">DESY </dd>
+<dt>URL:</dt>
+<dd style="margin-left: 11">https://desy.de </dd>
+<dt>Maturity:</dt>
+<dd style="margin-left: 11">Implementation will be based on mature versions of the current document.  </dd>
+<dt>Coverage:</dt>
+<dd style="margin-left: 11">The implementation is under way.  The use of DTLS functionality is not implemented.  </dd>
+<dt>Licensing:</dt>
+<dd style="margin-left: 11">LGPL </dd>
+<dt>Implementation experience:</dt>
+<dd style="margin-left: 11">The implementer has read and commented on the current document.  </dd>
+</dl>
+
+<p> </p>
+<h1 id="rfc.section.6.2">
+<a href="#rfc.section.6.2">6.2.</a> <a href="#section:B387F281-958F-470D-B4D4-1D85907B89F1" id="section:B387F281-958F-470D-B4D4-1D85907B89F1">Hammerspace NFS server</a>
+</h1>
+<p></p>
+
+<dl>
+<dt>Organization:</dt>
+<dd style="margin-left: 11">Hammerspace </dd>
+<dt>URL:</dt>
+<dd style="margin-left: 11">https://hammerspace.com </dd>
+<dt>Maturity:</dt>
+<dd style="margin-left: 11">Prototype software based on early versions of this document.  </dd>
+<dt>Coverage:</dt>
+<dd style="margin-left: 11">The bulk of this specification is implemented.  The use of DTLS functionality is not implemented.  </dd>
+<dt>Licensing:</dt>
+<dd style="margin-left: 11">Proprietary </dd>
+<dt>Implementation experience:</dt>
+<dd style="margin-left: 11">No comments from implementors.  </dd>
+</dl>
+
+<p> </p>
+<h1 id="rfc.section.6.3">
+<a href="#rfc.section.6.3">6.3.</a> <a href="#section:BF03B3A2-4483-4404-9E7A-F60FCD850F31" id="section:BF03B3A2-4483-4404-9E7A-F60FCD850F31">Linux NFS server and client</a>
+</h1>
+<p></p>
+
+<dl>
+<dt>Organization:</dt>
+<dd style="margin-left: 11">The Linux Foundation </dd>
+<dt>URL:</dt>
+<dd style="margin-left: 11">https://www.kernel.org </dd>
+<dt>Maturity:</dt>
+<dd style="margin-left: 11">Prototype software based on early versions of this document.  </dd>
+<dt>Coverage:</dt>
+<dd style="margin-left: 11">The bulk of this specification has yet to be implemented.  The use of DTLS functionality is not planned.  </dd>
+<dt>Licensing:</dt>
+<dd style="margin-left: 11">GPLv2 </dd>
+<dt>Implementation experience:</dt>
+<dd style="margin-left: 11">No comments from the implementor.  </dd>
+</dl>
+
+<p> </p>
+<h1 id="rfc.section.6.4">
+<a href="#rfc.section.6.4">6.4.</a> <a href="#section:86689813-E907-4046-ADF1-58E2BF668546" id="section:86689813-E907-4046-ADF1-58E2BF668546">FreeBSD NFS server and client</a>
+</h1>
+<p></p>
+
+<dl>
+<dt>Organization:</dt>
+<dd style="margin-left: 11">The FreeBSD Project </dd>
+<dt>URL:</dt>
+<dd style="margin-left: 11">https://www.freebsd.org </dd>
+<dt>Maturity:</dt>
+<dd style="margin-left: 11">Prototype software based on early versions of this document.  </dd>
+<dt>Coverage:</dt>
+<dd style="margin-left: 11">The bulk of this specification is implemented.  The use of DTLS functionality is not planned.  </dd>
+<dt>Licensing:</dt>
+<dd style="margin-left: 11">BSD </dd>
+<dt>Implementation experience:</dt>
+<dd style="margin-left: 11">Implementers have read and commented on this document.  </dd>
+</dl>
+
+<p> </p>
+<h1 id="rfc.section.7">
+<a href="#rfc.section.7">7.</a> <a href="#section:2AE49383-E6B2-4830-8407-995FEBF727F2" id="section:2AE49383-E6B2-4830-8407-995FEBF727F2">Security Considerations</a>
+</h1>
+<p id="rfc.section.7.p.1">One purpose of the mechanism described in the current document is to protect RPC-based applications against threats to the privacy of RPC transactions and RPC user identities.  A taxonomy of these threats appears in Section 5 of <a href="#RFC6973" class="xref">[RFC6973]</a>.  Also, Section 6 of <a href="#RFC7525" class="xref">[RFC7525]</a> contains a detailed discussion of technologies used in conjunction with TLS.  Implementers should familiarize themselves with these materials.  </p>
+<h1 id="rfc.section.7.1">
+<a href="#rfc.section.7.1">7.1.</a> <a href="#section:51737BB5-2B65-441E-AD1D-7EBF5123C079" id="section:51737BB5-2B65-441E-AD1D-7EBF5123C079">Limitations of an Opportunistic Approach</a>
+</h1>
+<p id="rfc.section.7.1.p.1">The purpose of using an explicitly opportunistic approach is to enable interoperation with implementations that do not support RPC-over-TLS.  A range of options is allowed by this approach, from "no peer authentication or encryption" to "server-only authentication with encryption" to "mutual authentication with encryption".  The actual security level may indeed be selected based on policy and without user intervention.  </p>
+<p id="rfc.section.7.1.p.2">In cases where interoperability is a priority, the security benefits of TLS are partially or entirely waived.  Implementations of the mechanism described in the current document must take care to accurately represent to all RPC consumers the level of security that is actually in effect.  Implementations are REQUIRED to provide an audit log of RPC-over-TLS security mode selection.  </p>
+<h1 id="rfc.section.7.1.1">
+<a href="#rfc.section.7.1.1">7.1.1.</a> <a href="#section:8894BDD2-0E0B-47A3-A2CB-70E4D93B55B0" id="section:8894BDD2-0E0B-47A3-A2CB-70E4D93B55B0">STRIPTLS Attacks</a>
+</h1>
+<p id="rfc.section.7.1.1.p.1">A classic form of attack on network protocols that initiate an association in plain-text to discover support for TLS is a man-in-the-middle that alters the plain-text handshake to make it appear as though TLS support is not available on one or both peers.  Clients implementers can choose from the following to mitigate STRIPTLS attacks: </p>
+
+<ul>
+<li>A TLSA record [RFC6698] can alert clients that TLS is expected to work, and provide a binding of hostname to x.509 identity.  If TLS cannot be negotiated or authentication fails, the client disconnects and reports the problem.  </li>
+<li>Client security policy can require that a TLS session is established on every connection.  If an attacker spoofs the handshake, the client disconnects and reports the problem.  If TLSA records are not available, this approach is strongly encouraged.  </li>
+</ul>
+
+<p> </p>
+<h1 id="rfc.section.7.2">
+<a href="#rfc.section.7.2">7.2.</a> <a href="#section:B9F8A982-CB0E-40FC-9460-680E89DB0001" id="section:B9F8A982-CB0E-40FC-9460-680E89DB0001">TLS Identity Management on Clients</a>
+</h1>
+<p id="rfc.section.7.2.p.1">The goal of the RPC-on-TLS protocol extension is to hide the content of RPC requests while they are in transit.  The RPC-on-TLS protocol by itself cannot protect against exposure of a user's RPC requests to other users on the same client.  </p>
+<p id="rfc.section.7.2.p.2">Moreover, client implementations are free to transmit RPC requests for more than one RPC user using the same TLS session.  Depending on the details of the client RPC implementation, this means that the client's TLS identity material is potentially visible to every RPC user that shares a TLS session.  Privileged users may also be able to access this TLS identity.  </p>
+<p id="rfc.section.7.2.p.3">As a result, client implementations need to carefully segregate TLS identity material so that local access to it is restricted to only the local users that are authorized to perform operations on the remote RPC server.  </p>
+<h1 id="rfc.section.7.3">
+<a href="#rfc.section.7.3">7.3.</a> <a href="#section:552B02A0-F19E-4B46-809C-672A6AE931A1" id="section:552B02A0-F19E-4B46-809C-672A6AE931A1">Security Considerations for AUTH_SYS on TLS</a>
+</h1>
+<p id="rfc.section.7.3.p.1">Using a TLS-protected transport when the AUTH_SYS authentication flavor is in use addresses several longstanding weaknesses (as detailed in <a href="#section:C7FB9DB5-5F4F-45AD-8BF7-74FFCA08BEBB" class="xref">Appendix A</a>).  TLS augments AUTH_SYS by providing both integrity protection and a privacy service that AUTH_SYS lacks.  TLS protects data payloads, RPC headers, and user identities against monitoring and alteration while in transit.  TLS guards against the insertion or deletion of messages, thus also ensuring the integrity of the message stream between RPC client and server.  Lastly, transport layer encryption plus peer authentication protects receiving XDR decoders from deserializing untrusted data, a common coding vulnerability.  </p>
+<p id="rfc.section.7.3.p.2">The use of TLS enables strong authentication of the communicating RPC peers, providing a degree of non-repudiation.  When AUTH_SYS is used with TLS, but the RPC client is unauthenticated, the RPC server still acts on RPC requests for which there is no trustworthy authentication.  In-transit traffic is protected, but the RPC client itself can still misrepresent user identity without server detection.  TLS without authentication is an improvement from AUTH_SYS without encryption, but it leaves a critical security exposure.  </p>
+<p id="rfc.section.7.3.p.3">In light of the above, it is RECOMMENDED that when AUTH_SYS is used, every RPC client should present host authentication material to RPC servers to prove that the client is a known one.  The server can then determine whether the UIDs and GIDs in AUTH_SYS requests from that client can be accepted.  </p>
+<p id="rfc.section.7.3.p.4">The use of TLS does not enable RPC clients to detect compromise that leads to the impersonation of RPC users.  Also, there continues to be a requirement that the mapping of 32-bit user and group ID values to user identities is the same on both the RPC client and server.  </p>
+<h1 id="rfc.section.7.4">
+<a href="#rfc.section.7.4">7.4.</a> <a href="#section:55D006D3-8CA6-4D7F-AF0D-BFB0FFEF7595" id="section:55D006D3-8CA6-4D7F-AF0D-BFB0FFEF7595">Best Security Policy Practices</a>
+</h1>
+<p id="rfc.section.7.4.p.1">RPC-over-TLS implementations and deployments are strongly encouraged to adhere to the following policies to achieve the strongest possible security with RPC-over-TLS.  </p>
+
+<ul>
+<li>When using AUTH_NULL or AUTH_SYS, both peers are required to have DNS TLSA records and certificate material, and a policy that requires mutual peer authentication and rejection of a connection when host authentication fails.  </li>
+<li>When using RPCSEC_GSS, GSS/Kerberos provides adequate host authentication and a policy that requires GSS mutual authentication and rejection of a connection when host authentication fails.  GSS integrity and privacy services, therefore, can be disabled in favor of TLS encryption with peer authentication.  </li>
+</ul>
+
+<p> </p>
+<h1 id="rfc.section.8">
+<a href="#rfc.section.8">8.</a> <a href="#section:7B126473-2A13-453B-9BCA-66BC11B7B018" id="section:7B126473-2A13-453B-9BCA-66BC11B7B018">IANA Considerations</a>
+</h1>
+<p id="rfc.section.8.p.1">Following Section 6 of <a href="#RFC7301" class="xref">[RFC7301]</a>, the authors request the allocation of the following value in the "Application-Layer Protocol Negotiation (ALPN) Protocol IDs" registry.  The "sunrpc" string identifies SunRPC when used over TLS.  </p>
+
+<dl>
+<dt>Protocol:</dt>
+<dd style="margin-left: 8">
+<br> SunRPC </dd>
+<dt>Identification Sequence:</dt>
+<dd style="margin-left: 8">
+<br> 0x73 0x75 0x6e 0x72 0x70 0x63 ("sunrpc") </dd>
+<dt>Reference:</dt>
+<dd style="margin-left: 8">
+<br> RFC-TBD </dd>
+</dl>
+
+<p> </p>
+<h1 id="rfc.references">
+<a href="#rfc.references">9.</a> References</h1>
+<h1 id="rfc.references.1">
+<a href="#rfc.references.1">9.1.</a> Normative References</h1>
+<table><tbody>
+<tr>
+<td class="reference"><b id="FIPS.180-4">[FIPS.180-4]</b></td>
+<td class="top">
+<a>National Institute of Standards and Technology</a>, "<a>Secure Hash Standard, Federal Information Processing Standards Publication FIPS PUB 180-4</a>", FIPS PUB 180-4, August 2015.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC2119">[RFC2119]</b></td>
+<td class="top">
+<a>Bradner, S.</a>, "<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC4279">[RFC4279]</b></td>
+<td class="top">
+<a>Eronen, P.</a> and <a>H. Tschofenig</a>, "<a href="https://tools.ietf.org/html/rfc4279">Pre-Shared Key Ciphersuites for Transport Layer Security (TLS)</a>", RFC 4279, DOI 10.17487/RFC4279, December 2005.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC5280">[RFC5280]</b></td>
+<td class="top">
+<a>Cooper, D.</a>, <a>Santesson, S.</a>, <a>Farrell, S.</a>, <a>Boeyen, S.</a>, <a>Housley, R.</a> and <a>W. Polk</a>, "<a href="https://tools.ietf.org/html/rfc5280">Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile</a>", RFC 5280, DOI 10.17487/RFC5280, May 2008.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC5531">[RFC5531]</b></td>
+<td class="top">
+<a>Thurlow, R.</a>, "<a href="https://tools.ietf.org/html/rfc5531">RPC: Remote Procedure Call Protocol Specification Version 2</a>", RFC 5531, DOI 10.17487/RFC5531, May 2009.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC6125">[RFC6125]</b></td>
+<td class="top">
+<a>Saint-Andre, P.</a> and <a>J. Hodges</a>, "<a href="https://tools.ietf.org/html/rfc6125">Representation and Verification of Domain-Based Application Service Identity within Internet Public Key Infrastructure Using X.509 (PKIX) Certificates in the Context of Transport Layer Security (TLS)</a>", RFC 6125, DOI 10.17487/RFC6125, March 2011.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC6347">[RFC6347]</b></td>
+<td class="top">
+<a>Rescorla, E.</a> and <a>N. Modadugu</a>, "<a href="https://tools.ietf.org/html/rfc6347">Datagram Transport Layer Security Version 1.2</a>", RFC 6347, DOI 10.17487/RFC6347, January 2012.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7258">[RFC7258]</b></td>
+<td class="top">
+<a>Farrell, S.</a> and <a>H. Tschofenig</a>, "<a href="https://tools.ietf.org/html/rfc7258">Pervasive Monitoring Is an Attack</a>", BCP 188, RFC 7258, DOI 10.17487/RFC7258, May 2014.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7301">[RFC7301]</b></td>
+<td class="top">
+<a>Friedl, S.</a>, <a>Popov, A.</a>, <a>Langley, A.</a> and <a>E. Stephan</a>, "<a href="https://tools.ietf.org/html/rfc7301">Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension</a>", RFC 7301, DOI 10.17487/RFC7301, July 2014.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7861">[RFC7861]</b></td>
+<td class="top">
+<a>Adamson, A.</a> and <a>N. Williams</a>, "<a href="https://tools.ietf.org/html/rfc7861">Remote Procedure Call (RPC) Security Version 3</a>", RFC 7861, DOI 10.17487/RFC7861, November 2016.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7942">[RFC7942]</b></td>
+<td class="top">
+<a>Sheffer, Y.</a> and <a>A. Farrel</a>, "<a href="https://tools.ietf.org/html/rfc7942">Improving Awareness of Running Code: The Implementation Status Section</a>", BCP 205, RFC 7942, DOI 10.17487/RFC7942, July 2016.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8174">[RFC8174]</b></td>
+<td class="top">
+<a>Leiba, B.</a>, "<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8446">[RFC8446]</b></td>
+<td class="top">
+<a>Rescorla, E.</a>, "<a href="https://tools.ietf.org/html/rfc8446">The Transport Layer Security (TLS) Protocol Version 1.3</a>", RFC 8446, DOI 10.17487/RFC8446, August 2018.</td>
+</tr>
+</tbody></table>
+<h1 id="rfc.references.2">
+<a href="#rfc.references.2">9.2.</a> Informative References</h1>
+<table><tbody>
+<tr>
+<td class="reference"><b id="RFC2203">[RFC2203]</b></td>
+<td class="top">
+<a>Eisler, M.</a>, <a>Chiu, A.</a> and <a>L. Ling</a>, "<a href="https://tools.ietf.org/html/rfc2203">RPCSEC_GSS Protocol Specification</a>", RFC 2203, DOI 10.17487/RFC2203, September 1997.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC2818">[RFC2818]</b></td>
+<td class="top">
+<a>Rescorla, E.</a>, "<a href="https://tools.ietf.org/html/rfc2818">HTTP Over TLS</a>", RFC 2818, DOI 10.17487/RFC2818, May 2000.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC6698">[RFC6698]</b></td>
+<td class="top">
+<a>Hoffman, P.</a> and <a>J. Schlyter</a>, "<a href="https://tools.ietf.org/html/rfc6698">The DNS-Based Authentication of Named Entities (DANE) Transport Layer Security (TLS) Protocol: TLSA</a>", RFC 6698, DOI 10.17487/RFC6698, August 2012.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC6973">[RFC6973]</b></td>
+<td class="top">
+<a>Cooper, A.</a>, <a>Tschofenig, H.</a>, <a>Aboba, B.</a>, <a>Peterson, J.</a>, <a>Morris, J.</a>, <a>Hansen, M.</a> and <a>R. Smith</a>, "<a href="https://tools.ietf.org/html/rfc6973">Privacy Considerations for Internet Protocols</a>", RFC 6973, DOI 10.17487/RFC6973, July 2013.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7435">[RFC7435]</b></td>
+<td class="top">
+<a>Dukhovni, V.</a>, "<a href="https://tools.ietf.org/html/rfc7435">Opportunistic Security: Some Protection Most of the Time</a>", RFC 7435, DOI 10.17487/RFC7435, December 2014.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7525">[RFC7525]</b></td>
+<td class="top">
+<a>Sheffer, Y.</a>, <a>Holz, R.</a> and <a>P. Saint-Andre</a>, "<a href="https://tools.ietf.org/html/rfc7525">Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)</a>", BCP 195, RFC 7525, DOI 10.17487/RFC7525, May 2015.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8166">[RFC8166]</b></td>
+<td class="top">
+<a>Lever, C.</a>, <a>Simpson, W.</a> and <a>T. Talpey</a>, "<a href="https://tools.ietf.org/html/rfc8166">Remote Direct Memory Access Transport for Remote Procedure Call Version 1</a>", RFC 8166, DOI 10.17487/RFC8166, June 2017.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8471">[RFC8471]</b></td>
+<td class="top">
+<a>Popov, A.</a>, <a>Nystroem, M.</a>, <a>Balfanz, D.</a> and <a>J. Hodges</a>, "<a href="https://tools.ietf.org/html/rfc8471">The Token Binding Protocol Version 1.0</a>", RFC 8471, DOI 10.17487/RFC8471, October 2018.</td>
+</tr>
+</tbody></table>
+<h1 id="rfc.appendix.A">
+<a href="#rfc.appendix.A">Appendix A.</a> <a href="#section:C7FB9DB5-5F4F-45AD-8BF7-74FFCA08BEBB" id="section:C7FB9DB5-5F4F-45AD-8BF7-74FFCA08BEBB">Known Weaknesses of the AUTH_SYS Authentication Flavor</a>
+</h1>
+<p id="rfc.section.A.p.1">The ONC RPC protocol, as specified in <a href="#RFC5531" class="xref">[RFC5531]</a>, provides several modes of security, traditionally referred to as "authentication flavors".  Some of these flavors provide much more than an authentication service.  We refer to these as authentication flavors, security flavors, or simply, flavors.  One of the earliest and most basic flavors is AUTH_SYS, also known as AUTH_UNIX.  Appendix A of <a href="#RFC5531" class="xref">[RFC5531]</a> specifies AUTH_SYS.  </p>
+<p id="rfc.section.A.p.2">AUTH_SYS assumes that the RPC client and server both use POSIX-style user and group identifiers (each user and group can be distinctly represented as a 32-bit unsigned integer).  It also assumes that the client and server both use the same mapping of user and group to an integer.  One user ID, one primary group ID, and up to 16 supplemental group IDs are associated with each RPC request.  The combination of these identifies the entity on the client that is making the request.  </p>
+<p id="rfc.section.A.p.3">A string identifies peers (hosts) in each RPC request.  <a href="#RFC5531" class="xref">[RFC5531]</a> does not specify any requirements for this string other than that is no longer than 255 octets.  It does not have to be the same from request to request.  Also, it does not have to match the DNS hostname of the sending host.  For these reasons, even though most implementations fill in their hostname in this field, receivers typically ignore its content.  </p>
+<p id="rfc.section.A.p.4">Appendix A of <a href="#RFC5531" class="xref">[RFC5531]</a> contains a brief explanation of security considerations: </p>
+
+<ul class="empty"><li>It should be noted that use of this flavor of authentication does not guarantee any security for the users or providers of a service, in itself.  The authentication provided by this scheme can be considered legitimate only when applications using this scheme and the network can be secured externally, and privileged transport addresses are used for the communicating end-points (an example of this is the use of privileged TCP/UDP ports in UNIX systems -- note that not all systems enforce privileged transport address mechanisms).  </li></ul>
+
+<p> </p>
+<p id="rfc.section.A.p.5">It should be clear, therefore, that AUTH_SYS by itself offers little to no communication security: </p>
+
+<ol>
+<li>It does not protect the privacy or integrity of RPC requests, users, or payloads, relying instead on "external" security.  </li>
+<li>It does not provide authentication of RPC peer machines, other than inclusion of an unprotected domain name.  </li>
+<li>The use of 32-bit unsigned integers as user and group identifiers is problematic because these data types are not cryptographically signed or otherwise verified by any authority.  </li>
+<li>Because the user and group ID fields are not integrity-protected, AUTH_SYS does not provide non-repudiation.  </li>
+</ol>
+
+<p> </p>
+<h1 id="rfc.acknowledgments"><a href="#rfc.acknowledgments">Acknowledgments</a></h1>
+<p id="rfc.section.B.p.1">Special mention goes to Charles Fisher, author of <a href="https://www.linuxjournal.com/content/encrypting-nfsv4-stunnel-tls">"Encrypting NFSv4 with Stunnel TLS" </a>.  His article inspired the mechanism described in this document.  </p>
+<p id="rfc.section.B.p.2">Many thanks to Tigran Mkrtchyan for his work on the DESY prototype and his feedback on the current document.  </p>
+<p id="rfc.section.B.p.3">Thanks to Derrell Piper for numerous suggestions that improved both this simple mechanism and the current document's security-related discussion.  </p>
+<p id="rfc.section.B.p.4">The authors are grateful to Bill Baker, David Black, Alan DeKok, Lars Eggert, Benjamin Kaduk, Olga Kornievskaia, Greg Marsden, Alex McDonald, Justin Mazzola Paluska, Tom Talpey, and Martin Thomson for their input and support of this work.  </p>
+<p id="rfc.section.B.p.5">Lastly, special thanks to document shepherd David Noveck, Transport Area Director Magnus Westerlund, NFSV4 Working Group Chairs Spencer Shepler and Brian Pawlowski, and NFSV4 Working Group Secretary Thomas Haynes for their guidance and oversight.  </p>
+<h1 id="rfc.authors"><a href="#rfc.authors">Authors' Addresses</a></h1>
+<div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Trond Myklebust</span> 
+	  <span class="n hidden">
+		<span class="family-name">Myklebust</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Hammerspace Inc </span>
+	<span class="adr">
+	  <span class="vcardline">4300 El Camino Real Ste 105</span>
+
+	  <span class="vcardline">
+		<span class="locality">Los Altos</span>,  
+		<span class="region">CA</span> 
+		<span class="code">94022</span>
+	  </span>
+	  <span class="country-name vcardline">United States of America</span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:trond.myklebust@hammerspace.com">trond.myklebust@hammerspace.com</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Charles Lever</span> (editor)
+	  <span class="n hidden">
+		<span class="family-name">Lever</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Oracle Corporation</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline">United States of America</span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:chuck.lever@oracle.com">chuck.lever@oracle.com</a></span>
+
+  </address>
+</div>
+
+</body>
+</html>
