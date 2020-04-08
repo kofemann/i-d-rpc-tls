@@ -403,6 +403,8 @@
 <link href="#rfc.section.7.3" rel="Chapter" title="7.3 Security Considerations for AUTH_SYS on TLS">
 <link href="#rfc.section.7.4" rel="Chapter" title="7.4 Best Security Policy Practices">
 <link href="#rfc.section.8" rel="Chapter" title="8 IANA Considerations">
+<link href="#rfc.section.8.1" rel="Chapter" title="8.1 RPC Authentication Flavor">
+<link href="#rfc.section.8.2" rel="Chapter" title="8.2 ALPN Identifier for SUNRPC">
 <link href="#rfc.references" rel="Chapter" title="9 References">
 <link href="#rfc.references.1" rel="Chapter" title="9.1 Normative References">
 <link href="#rfc.references.2" rel="Chapter" title="9.2 Informative References">
@@ -411,12 +413,12 @@
 <link href="#rfc.authors" rel="Chapter">
 
 
-  <meta name="generator" content="xml2rfc version 2.40.1 - https://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.42.0 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Myklebust, T. and C. Lever, Ed." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-nfsv4-rpc-tls-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2020-03" />
+  <meta name="dct.issued" scheme="ISO8601" content="2020-08" />
   <meta name="dct.abstract" content="This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.   " />
   <meta name="description" content="This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.   " />
 
@@ -444,8 +446,8 @@
 <td class="right">Oracle</td>
 </tr>
 <tr>
-<td class="left">Expires: September 4, 2020</td>
-<td class="right">March 3, 2020</td>
+<td class="left">Expires: October 10, 2020</td>
+<td class="right">April 8, 2020</td>
 </tr>
 
     	
@@ -461,11 +463,10 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 4, 2020.</p>
+<p>This Internet-Draft will expire on October 10, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
-<p>This document may contain material from IETF Documents or IETF Contributions published or made publicly available before November 10, 2008.  The person(s) controlling the copyright in some of this material may not have granted the IETF Trust the right to allow modifications of such material outside the IETF Standards Process. Without obtaining an adequate license from the person(s) controlling the copyright in such materials, this document may not be modified outside the IETF Standards Process, and derivative works of it may not be created outside the IETF Standards Process, except to format it for publication as an RFC or to translate it into languages other than English.</p>
 
   
   <hr class="noprint" />
@@ -530,7 +531,11 @@
 </li>
 </ul><li>8.   <a href="#rfc.section.8">IANA Considerations</a>
 </li>
-<li>9.   <a href="#rfc.references">References</a>
+<ul><li>8.1.   <a href="#rfc.section.8.1">RPC Authentication Flavor</a>
+</li>
+<li>8.2.   <a href="#rfc.section.8.2">ALPN Identifier for SUNRPC</a>
+</li>
+</ul><li>9.   <a href="#rfc.references">References</a>
 </li>
 <ul><li>9.1.   <a href="#rfc.references.1">Normative References</a>
 </li>
@@ -554,10 +559,10 @@
 
 <ul>
 <li>Parts of each RPC header remain in clear-text, constituting a significant security exposure.  </li>
-<li>Offloading GSS privacy is not practical in large multi-user deployments since each message is encrypted using a key based on the issuing RPC user.  </li>
+<li>Offloading the GSS privacy service is not practical in large multi-user deployments since each message is encrypted using a key based on the issuing RPC user.  </li>
 </ul>
 
-<p> However strong a privacy service is, it cannot provide any security if the challenges of using it result in choosing not to deploy it at all.  </p>
+<p> However strong GSS-provided confidentiality is, it cannot provide any security if the challenges of using it result in choosing not to deploy it at all.  </p>
 <p id="rfc.section.1.p.3">Moreover, the use of AUTH_SYS remains common despite the adverse effects that acceptance of UIDs and GIDs from unauthenticated clients brings with it.  Continued use is in part because: </p>
 
 <ul>
@@ -566,14 +571,14 @@
 </ul>
 
 <p> </p>
-<p id="rfc.section.1.p.4">The alternative described in the current document is to employ a transport layer security mechanism that can protect the privacy of each RPC connection transparently to RPC and upper-layer protocols.  The Transport Layer Security protocol <a href="#RFC8446" class="xref">[RFC8446]</a> (TLS) is a well-established Internet building block that protects many standard Internet protocols such as the Hypertext Transport Protocol (HTTP) <a href="#RFC2818" class="xref">[RFC2818]</a>.  </p>
+<p id="rfc.section.1.p.4">The alternative described in the current document is to employ a transport layer security mechanism that can protect the confidentiality of each RPC connection transparently to RPC and upper-layer protocols.  The Transport Layer Security protocol <a href="#RFC8446" class="xref">[RFC8446]</a> (TLS) is a well-established Internet building block that protects many standard Internet protocols such as the Hypertext Transport Protocol (HTTP) <a href="#RFC2818" class="xref">[RFC2818]</a>.  </p>
 <p id="rfc.section.1.p.5">Encrypting at the RPC transport layer accords several significant benefits: </p>
 
 <dl>
 <dt>Encryption By Default:</dt>
 <dd style="margin-left: 8">Transport encryption can be enabled without additional administrative tasks such as identifying client systems to a trust authority, generating additional keying material, or provisioning a secure network tunnel.  </dd>
 <dt>Encryption Offload:</dt>
-<dd style="margin-left: 8">Hardware support for GSS privacy has not appeared in the marketplace.  However, the use of a well-established transport encryption mechanism that is employed by other ubiquitous network protocols makes it more likely that encryption offload for RPC is practicable.  </dd>
+<dd style="margin-left: 8">Hardware support for the GSS privacy service has not appeared in the marketplace.  However, the use of a well-established transport encryption mechanism that is employed by other ubiquitous network protocols makes it more likely that encryption offload for RPC is practicable.  </dd>
 <dt>Securing AUTH_SYS:</dt>
 <dd style="margin-left: 8">Most critically, transport encryption can significantly reduce several security issues inherent in the current widespread use of AUTH_SYS (i.e., acceptance of UIDs and GIDs generated by an unauthenticated client).  </dd>
 <dt>Decoupled User and Host Identities:</dt>
@@ -592,7 +597,7 @@
 <a href="#rfc.section.3">3.</a> <a href="#section:0EB1100E-DAA8-4B2C-98AE-94258CFDCB1B" id="section:0EB1100E-DAA8-4B2C-98AE-94258CFDCB1B">Terminology</a>
 </h1>
 <p id="rfc.section.3.p.1">This document adopts the terminology introduced in Section 3 of <a href="#RFC6973" class="xref">[RFC6973]</a> and assumes a working knowledge of the Remote Procedure Call (RPC) version 2 protocol <a href="#RFC5531" class="xref">[RFC5531]</a> and the Transport Layer Security (TLS) version 1.3 protocol <a href="#RFC8446" class="xref">[RFC8446]</a>.  </p>
-<p id="rfc.section.3.p.2">Note also that the NFS community uses the term "privacy" where other Internet communities use "confidentiality".  In the current document the two terms are synonymous.  </p>
+<p id="rfc.section.3.p.2">Note also that the NFS community long ago adopted the use of the term "privacy" from documents such as <a href="#RFC2203" class="xref">[RFC2203]</a>.  In the current document, the authors use the term "privacy" only when referring specifically to the historic GSS privacy service defined in <a href="#RFC2203" class="xref">[RFC2203]</a>.  Otherwise, the authors use the term "confidentiality", following the practices of contemporary security communities.  </p>
 <p id="rfc.section.3.p.3">We adhere to the convention that a "client" is a network host that actively initiates an association, and a "server" is a network host that passively accepts an association request.  </p>
 <p id="rfc.section.3.p.4">RPC documentation historically refers to the authentication of a connecting host as "machine authentication" or "host authentication".  TLS documentation refers to the same as "peer authentication".  In the current document there is little distinction between these terms.  </p>
 <p id="rfc.section.3.p.5">The term "user authentication" in this document refers specifically to the RPC caller's credential, provided in the "cred" and "verf" fields in each RPC Call.  </p>
@@ -603,28 +608,11 @@
 <a href="#rfc.section.4.1">4.1.</a> <a href="#section:0A03673B-14BA-4228-8A8A-F76AA318CA73" id="section:0A03673B-14BA-4228-8A8A-F76AA318CA73">Discovering Server-side TLS Support</a>
 </h1>
 <p id="rfc.section.4.1.p.1">The mechanism described in this document interoperates fully with RPC implementations that do not support TLS.  The use of TLS is automatically disabled in these cases.  </p>
-<pre>
-&lt;CODE BEGINS&gt;
-
-enum auth_flavor {
-        AUTH_NONE       = 0,
-        AUTH_SYS        = 1,
-        AUTH_SHORT      = 2,
-        AUTH_DH         = 3,
-        AUTH_KERB       = 4,
-        AUTH_RSA        = 5,
-        RPCSEC_GSS      = 6,
-        AUTH_TLS        = 7,
-
-        /* and more to be defined */
-};
-
-&lt;CODE ENDS&gt;
-</pre>
 <p id="rfc.section.4.1.p.2">To achieve this, we introduce a new RPC authentication flavor called AUTH_TLS.  This new flavor signals that the client wants to initiate TLS negotiation if the server supports it.  Except for the modifications described in this section, the RPC protocol is unaware of security encapsulation.  </p>
-<p id="rfc.section.4.1.p.3">The flavor value of the verifier received in the reply message from the server MUST be AUTH_NONE.  The length of the verifier's body field is eight.  The bytes of the verifier's body field encode the ASCII characters "STARTTLS" as a fixed-length opaque.  </p>
-<p id="rfc.section.4.1.p.4">When an RPC client is ready to begin sending encrypted traffic to a server, it starts with a NULL RPC request with an auth_flavor of AUTH_TLS.  The NULL request is made to the same port as if TLS were not in use.  </p>
-<p id="rfc.section.4.1.p.5">The RPC server can respond in one of three ways: </p>
+<p id="rfc.section.4.1.p.3">The length of the opaque data constituting the credential sent in the call message MUST be zero.  The verifier accompanying the credential MUST be an AUTH_NONE verifier of length zero.  </p>
+<p id="rfc.section.4.1.p.4">The flavor value of the verifier received in the reply message from the server MUST be AUTH_NONE.  The length of the verifier's body field is eight.  The bytes of the verifier's body field encode the ASCII characters "STARTTLS" as a fixed-length opaque.  </p>
+<p id="rfc.section.4.1.p.5">When an RPC client is ready to begin sending encrypted traffic to a server, it starts with a NULL RPC request with an auth_flavor of AUTH_TLS.  The value of AUTH_TLS is defined in <a href="#section:2CD51855-CE40-4B8D-A220-F211C477964F" class="xref">Section 8.1</a>A.  The NULL request is made to the same port as if TLS were not in use.  </p>
+<p id="rfc.section.4.1.p.6">The RPC server can respond in one of three ways: </p>
 
 <ul>
 <li>If the RPC server does not recognize the AUTH_TLS authentication flavor, it responds with a reject_stat of AUTH_ERROR.  The RPC client then knows that this server does not support TLS.  </li>
@@ -633,9 +621,9 @@ enum auth_flavor {
 </ul>
 
 <p> </p>
-<p id="rfc.section.4.1.p.6">Once the TLS handshake is complete, the RPC client and server have established a secure channel for communicating.  The client MUST switch to a security flavor other than AUTH_TLS within that channel, presumably after negotiating down redundant RPCSEC_GSS privacy and integrity services and applying channel binding <a href="#RFC7861" class="xref">[RFC7861]</a>.  </p>
-<p id="rfc.section.4.1.p.7">If TLS negotiation fails for any reason, the RPC client reports this failure to the upper-layer application the same way it would report an AUTH_ERROR rejection from the RPC server.  </p>
-<p id="rfc.section.4.1.p.8">If an RPC client attempts to use AUTH_TLS for anything other than the NULL RPC procedure, the RPC server MUST respond with a reject_stat of AUTH_ERROR.  </p>
+<p id="rfc.section.4.1.p.7">Once the TLS handshake is complete, the RPC client and server have established a secure channel for communicating.  The client MUST switch to a security flavor other than AUTH_TLS within that channel, presumably after negotiating down redundant RPCSEC_GSS privacy and integrity services and applying channel binding <a href="#RFC7861" class="xref">[RFC7861]</a>.  </p>
+<p id="rfc.section.4.1.p.8">If TLS negotiation fails for any reason, the RPC client reports this failure to the upper-layer application the same way it would report an AUTH_ERROR rejection from the RPC server.  </p>
+<p id="rfc.section.4.1.p.9">If an RPC client attempts to use AUTH_TLS for anything other than the NULL RPC procedure, the RPC server MUST respond with a reject_stat of AUTH_ERROR.  </p>
 <h1 id="rfc.section.4.2">
 <a href="#rfc.section.4.2">4.2.</a> <a href="#section:6EDEF553-C95A-47D7-ABBA-0B537FE3A959" id="section:6EDEF553-C95A-47D7-ABBA-0B537FE3A959">Authentication</a>
 </h1>
@@ -656,7 +644,7 @@ enum auth_flavor {
 <h1 id="rfc.section.4.2.1">
 <a href="#rfc.section.4.2.1">4.2.1.</a> <a href="#section:12D92596-F310-48C8-A4E0-B6CA038524E5" id="section:12D92596-F310-48C8-A4E0-B6CA038524E5">Using TLS with RPCSEC GSS</a>
 </h1>
-<p id="rfc.section.4.2.1.p.1">RPCSEC GSS can provide per-request integrity or privacy (also known as confidentiality) services.  When operating over a TLS session, the GSS services become redundant.  A TLS-capable RPC implementation uses GSS channel binding to determine when GSS integrity or privacy is unnecessary.  See Section 2.5 of <a href="#RFC7861" class="xref">[RFC7861]</a> for details.  </p>
+<p id="rfc.section.4.2.1.p.1">RPCSEC GSS can protect per-request integrity or confidentiality.  When operating over a TLS session, the GSS services become redundant.  A TLS-capable RPC implementation uses GSS channel binding to determine when the use of the GSS integrity or privacy services are redundant.  See Section 2.5 of <a href="#RFC7861" class="xref">[RFC7861]</a> for details.  </p>
 <p id="rfc.section.4.2.1.p.2">When using GSS on a TLS session, the RPC server is still required to possess a GSS service principal.  GSS mutual authentication still occurs after a TLS session has been established.  </p>
 <h1 id="rfc.section.5">
 <a href="#rfc.section.5">5.</a> <a href="#section:D93526DA-7B9D-419B-BE84-4AD8DA48577E" id="section:D93526DA-7B9D-419B-BE84-4AD8DA48577E">TLS Requirements</a>
@@ -748,8 +736,9 @@ enum auth_flavor {
 <h1 id="rfc.section.6">
 <a href="#rfc.section.6">6.</a> <a href="#section:88BBA4D6-ED42-4FE6-A208-9D277B68729A" id="section:88BBA4D6-ED42-4FE6-A208-9D277B68729A">Implementation Status</a>
 </h1>
-<p id="rfc.section.6.p.1">This section records the status of known implementations of the protocol defined by this specification at the time of posting of this Internet-Draft, and is based on a proposal described in <a href="#RFC7942" class="xref">[RFC7942]</a>.  The description of implementations in this section is intended to assist the IETF in its decision processes in progressing drafts to RFCs.  </p>
-<p id="rfc.section.6.p.2">Please note that the listing of any individual implementation here does not imply endorsement by the IETF.  Furthermore, no effort has been spent to verify the information presented here that was supplied by IETF contributors.  This is not intended as, and must not be construed to be, a catalog of available implementations or their features.  Readers are advised to note that other implementations may exist.  </p>
+<p id="rfc.section.6.p.1">RFC Editor: Please remove this section and the reference to RFC 7942 before this document is published.  </p>
+<p id="rfc.section.6.p.2">This section records the status of known implementations of the protocol defined by this specification at the time of posting of this Internet-Draft, and is based on a proposal described in <a href="#RFC7942" class="xref">[RFC7942]</a>.  The description of implementations in this section is intended to assist the IETF in its decision processes in progressing drafts to RFCs.  </p>
+<p id="rfc.section.6.p.3">Please note that the listing of any individual implementation here does not imply endorsement by the IETF.  Furthermore, no effort has been spent to verify the information presented here that was supplied by IETF contributors.  This is not intended as, and must not be construed to be, a catalog of available implementations or their features.  Readers are advised to note that other implementations may exist.  </p>
 <h1 id="rfc.section.6.1">
 <a href="#rfc.section.6.1">6.1.</a> <a href="#section:94AA7844-E393-4353-A35D-DA01D13C909B" id="section:94AA7844-E393-4353-A35D-DA01D13C909B">DESY NFS server</a>
 </h1>
@@ -837,7 +826,7 @@ enum auth_flavor {
 <h1 id="rfc.section.7">
 <a href="#rfc.section.7">7.</a> <a href="#section:2AE49383-E6B2-4830-8407-995FEBF727F2" id="section:2AE49383-E6B2-4830-8407-995FEBF727F2">Security Considerations</a>
 </h1>
-<p id="rfc.section.7.p.1">One purpose of the mechanism described in the current document is to protect RPC-based applications against threats to the privacy of RPC transactions and RPC user identities.  A taxonomy of these threats appears in Section 5 of <a href="#RFC6973" class="xref">[RFC6973]</a>.  Also, Section 6 of <a href="#RFC7525" class="xref">[RFC7525]</a> contains a detailed discussion of technologies used in conjunction with TLS.  Implementers should familiarize themselves with these materials.  </p>
+<p id="rfc.section.7.p.1">One purpose of the mechanism described in the current document is to protect RPC-based applications against threats to the confidentiality of RPC transactions and RPC user identities.  A taxonomy of these threats appears in Section 5 of <a href="#RFC6973" class="xref">[RFC6973]</a>.  Also, Section 6 of <a href="#RFC7525" class="xref">[RFC7525]</a> contains a detailed discussion of technologies used in conjunction with TLS.  Implementers should familiarize themselves with these materials.  </p>
 <h1 id="rfc.section.7.1">
 <a href="#rfc.section.7.1">7.1.</a> <a href="#section:51737BB5-2B65-441E-AD1D-7EBF5123C079" id="section:51737BB5-2B65-441E-AD1D-7EBF5123C079">Limitations of an Opportunistic Approach</a>
 </h1>
@@ -863,7 +852,7 @@ enum auth_flavor {
 <h1 id="rfc.section.7.3">
 <a href="#rfc.section.7.3">7.3.</a> <a href="#section:552B02A0-F19E-4B46-809C-672A6AE931A1" id="section:552B02A0-F19E-4B46-809C-672A6AE931A1">Security Considerations for AUTH_SYS on TLS</a>
 </h1>
-<p id="rfc.section.7.3.p.1">Using a TLS-protected transport when the AUTH_SYS authentication flavor is in use addresses several longstanding weaknesses (as detailed in <a href="#section:C7FB9DB5-5F4F-45AD-8BF7-74FFCA08BEBB" class="xref">Appendix A</a>).  TLS augments AUTH_SYS by providing both integrity protection and a privacy service that AUTH_SYS lacks.  TLS protects data payloads, RPC headers, and user identities against monitoring and alteration while in transit.  TLS guards against the insertion or deletion of messages, thus also ensuring the integrity of the message stream between RPC client and server.  Lastly, transport layer encryption plus peer authentication protects receiving XDR decoders from deserializing untrusted data, a common coding vulnerability.  </p>
+<p id="rfc.section.7.3.p.1">Using a TLS-protected transport when the AUTH_SYS authentication flavor is in use addresses several longstanding weaknesses (as detailed in <a href="#section:C7FB9DB5-5F4F-45AD-8BF7-74FFCA08BEBB" class="xref">Appendix A</a>).  TLS augments AUTH_SYS by providing both integrity protection and confidentiality that AUTH_SYS lacks.  TLS protects data payloads, RPC headers, and user identities against monitoring and alteration while in transit.  TLS guards against the insertion or deletion of messages, thus also ensuring the integrity of the message stream between RPC client and server.  Lastly, transport layer encryption plus peer authentication protects receiving XDR decoders from deserializing untrusted data, a common coding vulnerability.  </p>
 <p id="rfc.section.7.3.p.2">The use of TLS enables strong authentication of the communicating RPC peers, providing a degree of non-repudiation.  When AUTH_SYS is used with TLS, but the RPC client is unauthenticated, the RPC server still acts on RPC requests for which there is no trustworthy authentication.  In-transit traffic is protected, but the RPC client itself can still misrepresent user identity without server detection.  TLS without authentication is an improvement from AUTH_SYS without encryption, but it leaves a critical security exposure.  </p>
 <p id="rfc.section.7.3.p.3">In light of the above, it is RECOMMENDED that when AUTH_SYS is used, every RPC client should present host authentication material to RPC servers to prove that the client is a known one.  The server can then determine whether the UIDs and GIDs in AUTH_SYS requests from that client can be accepted.  </p>
 <p id="rfc.section.7.3.p.4">The use of TLS does not enable RPC clients to detect compromise that leads to the impersonation of RPC users.  Also, there continues to be a requirement that the mapping of 32-bit user and group ID values to user identities is the same on both the RPC client and server.  </p>
@@ -881,18 +870,39 @@ enum auth_flavor {
 <h1 id="rfc.section.8">
 <a href="#rfc.section.8">8.</a> <a href="#section:7B126473-2A13-453B-9BCA-66BC11B7B018" id="section:7B126473-2A13-453B-9BCA-66BC11B7B018">IANA Considerations</a>
 </h1>
-<p id="rfc.section.8.p.1">Following Section 6 of <a href="#RFC7301" class="xref">[RFC7301]</a>, the authors request the allocation of the following value in the "Application-Layer Protocol Negotiation (ALPN) Protocol IDs" registry.  The "sunrpc" string identifies SunRPC when used over TLS.  </p>
+<p id="rfc.section.8.p.1">RFC Editor: In the following subsections, please replace RFC-TBD with the RFC number assigned to this document.  </p>
+<h1 id="rfc.section.8.1">
+<a href="#rfc.section.8.1">8.1.</a> <a href="#section:2CD51855-CE40-4B8D-A220-F211C477964F" id="section:2CD51855-CE40-4B8D-A220-F211C477964F">RPC Authentication Flavor</a>
+</h1>
+<p id="rfc.section.8.1.p.1">Following Appendix B of <a href="#RFC5531" class="xref">[RFC5531]</a>, the authors request a single new entry in the RPC Authentication Flavor Numbers registry.  The purpose of the new authentication flavor is to signal the use of TLS with RPC.  This new flavor is not a pseudo-flavor.  </p>
+<p id="rfc.section.8.1.p.2">The fields in the new entry are assigned as follows: </p>
+
+<dl>
+<dt>Identifier String:</dt>
+<dd style="margin-left: 8">AUTH_TLS </dd>
+<dt>Flavor Name:</dt>
+<dd style="margin-left: 8">TLS </dd>
+<dt>Value:</dt>
+<dd style="margin-left: 8">7 </dd>
+<dt>Description:</dt>
+<dd style="margin-left: 8">Signals the use of TLS to protect RPC messages on socket-based transports </dd>
+<dt>Reference:</dt>
+<dd style="margin-left: 8">RFC-TBD </dd>
+</dl>
+
+<p> </p>
+<h1 id="rfc.section.8.2">
+<a href="#rfc.section.8.2">8.2.</a> <a href="#section:58905D7A-06B1-4469-964A-DAC607DAC500" id="section:58905D7A-06B1-4469-964A-DAC607DAC500">ALPN Identifier for SUNRPC</a>
+</h1>
+<p id="rfc.section.8.2.p.1">Following Section 6 of <a href="#RFC7301" class="xref">[RFC7301]</a>, the authors request the allocation of the following value in the "Application-Layer Protocol Negotiation (ALPN) Protocol IDs" registry.  The "sunrpc" string identifies SunRPC when used over TLS.  </p>
 
 <dl>
 <dt>Protocol:</dt>
-<dd style="margin-left: 8">
-<br> SunRPC </dd>
+<dd style="margin-left: 8">SunRPC </dd>
 <dt>Identification Sequence:</dt>
-<dd style="margin-left: 8">
-<br> 0x73 0x75 0x6e 0x72 0x70 0x63 ("sunrpc") </dd>
+<dd style="margin-left: 8">0x73 0x75 0x6e 0x72 0x70 0x63 ("sunrpc") </dd>
 <dt>Reference:</dt>
-<dd style="margin-left: 8">
-<br> RFC-TBD </dd>
+<dd style="margin-left: 8">RFC-TBD </dd>
 </dl>
 
 <p> </p>
@@ -1025,7 +1035,7 @@ enum auth_flavor {
 <p id="rfc.section.A.p.5">It should be clear, therefore, that AUTH_SYS by itself offers little to no communication security: </p>
 
 <ol>
-<li>It does not protect the privacy or integrity of RPC requests, users, or payloads, relying instead on "external" security.  </li>
+<li>It does not protect the confidentiality or integrity of RPC requests, users, or payloads, relying instead on "external" security.  </li>
 <li>It does not provide authentication of RPC peer machines, other than inclusion of an unprotected domain name.  </li>
 <li>The use of 32-bit unsigned integers as user and group identifiers is problematic because these data types are not cryptographically signed or otherwise verified by any authority.  </li>
 <li>Because the user and group ID fields are not integrity-protected, AUTH_SYS does not provide non-repudiation.  </li>
