@@ -1,6 +1,6 @@
 {
   "magic": "B8n2c@e8kvfx",
-  "timestamp": "2020-04-08T16:36:22.192742+00:00",
+  "timestamp": "2020-04-09T20:54:33.079185+00:00",
   "repo": "chucklever/i-d-rpc-tls",
   "labels": [
     {
@@ -219,7 +219,7 @@
       "id": "MDU6SXNzdWU1NzcwNjMzNDg=",
       "title": "\"unique global identity\" might exclude site local certifications",
       "url": "https://github.com/chucklever/i-d-rpc-tls/issues/11",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "chucklever",
       "authorAssociation": "OWNER",
       "assignees": [
@@ -230,8 +230,8 @@
       ],
       "body": "Rick Macklem says:\r\nAs I am working through implementation of NFS over TLS, I have run into a couple of things related to certificates. Here's an example scenario:\r\n- The client is a laptop that wants to mount a server from \"anywhere\" using TLS, so that data is encrypted on the wire. The server understandably wants to use \"mutual authentication\" to determine that the client is indeed one that is allowed to mount the server.\r\n\r\nOk, so now how do you get a certificate for the client that the server can reasonably verify?\r\n--> After a discussion over on a FreeBSD mailing list, it sounds like the easy (maybe only?) way to do this is for the NFS server admin. to run a site local CA and generate certificates against that.\r\n- Although I'm sure there are other ways, you can create a site local CA certificate with two openssl commands and sign a certificate for a client with two more openssl commands.\r\nThen the server can verify the certificate using the CAcert that was used to sign the client's certificate.\r\n\r\nNow, when I read the sections around Page 6 of the draft...\r\n\r\n>   Mutual Host Authentication\r\n>      In this type of deployment, the client possesses a unique global\r\n>      identity (e.g., a certificate).  As part of the TLS handshake,\r\n>      both peers authenticate using the presented TLS identities.  If\r\n>      authentication of either peer fails, or if authorization based on\r\n>      those identities blocks access to the server, the client\r\n>      association MUST be rejected.\r\n\r\nFor the above, the client does not possess a unique global identity, it might more correctly be called a \"site local identity\" that the server can authenticate. Is the \"unique global identity\" requirement necessary? It seems to me that a site local CA issued certificate might be appropriate. (RFC 5280 page 12, second (a) item seems to allow site local CA certificates).",
       "createdAt": "2020-03-06T17:07:17Z",
-      "updatedAt": "2020-03-09T20:25:52Z",
-      "closedAt": null,
+      "updatedAt": "2020-04-08T21:13:56Z",
+      "closedAt": "2020-04-08T21:13:56Z",
       "comments": [
         {
           "author": "chucklever",
