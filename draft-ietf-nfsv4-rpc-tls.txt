@@ -6,7 +6,7 @@ Network File System Version 4                               T. Myklebust
 Internet-Draft                                               Hammerspace
 Updates: 5531 (if approved)                                C. Lever, Ed.
 Intended status: Standards Track                                  Oracle
-Expires: October 10, 2020                                  April 8, 2020
+Expires: October 11, 2020                                  April 9, 2020
 
 
           Towards Remote Procedure Call Encryption By Default
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on October 10, 2020.
+   This Internet-Draft will expire on October 11, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Myklebust & Lever       Expires October 10, 2020                [Page 1]
+Myklebust & Lever       Expires October 11, 2020                [Page 1]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
@@ -88,19 +88,20 @@ Table of Contents
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
      7.1.  Limitations of an Opportunistic Approach  . . . . . . . .  14
        7.1.1.  STRIPTLS Attacks  . . . . . . . . . . . . . . . . . .  14
-     7.2.  TLS Identity Management on Clients  . . . . . . . . . . .  14
+       7.1.2.  Privacy Leakage Before Session Establishment  . . . .  15
+     7.2.  TLS Identity Management on Clients  . . . . . . . . . . .  15
      7.3.  Security Considerations for AUTH_SYS on TLS . . . . . . .  15
      7.4.  Best Security Policy Practices  . . . . . . . . . . . . .  16
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
-     8.1.  RPC Authentication Flavor . . . . . . . . . . . . . . . .  16
-     8.2.  ALPN Identifier for SUNRPC  . . . . . . . . . . . . . . .  16
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  17
+     8.1.  RPC Authentication Flavor . . . . . . . . . . . . . . . .  17
+     8.2.  ALPN Identifier for SUNRPC  . . . . . . . . . . . . . . .  17
    9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  17
      9.1.  Normative References  . . . . . . . . . . . . . . . . . .  17
-     9.2.  Informative References  . . . . . . . . . . . . . . . . .  18
+     9.2.  Informative References  . . . . . . . . . . . . . . . . .  19
    Appendix A.  Known Weaknesses of the AUTH_SYS Authentication
-                Flavor . . . . . . . . . . . . . . . . . . . . . . .  19
-   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  20
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  21
+                Flavor . . . . . . . . . . . . . . . . . . . . . . .  20
+   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  21
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  22
 
 
 
@@ -108,8 +109,7 @@ Table of Contents
 
 
 
-
-Myklebust & Lever       Expires October 10, 2020                [Page 2]
+Myklebust & Lever       Expires October 11, 2020                [Page 2]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
@@ -165,7 +165,7 @@ Internet-Draft                RPC-Over-TLS                    April 2020
 
 
 
-Myklebust & Lever       Expires October 10, 2020                [Page 3]
+Myklebust & Lever       Expires October 11, 2020                [Page 3]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
@@ -194,17 +194,20 @@ Internet-Draft                RPC-Over-TLS                    April 2020
       authentication.
 
    The current document specifies the implementation of RPC on an
-   encrypted transport in a fashion that is transparent to upper-layer
+   encrypted transport in a manner that is transparent to upper-layer
    protocols based on RPC.  The imposition of encryption at the
    transport layer protects any upper-layer protocol that employs RPC,
    without alteration of that protocol.
 
-   Further, the current document defines policies in line with [RFC7435]
-   which enable RPC-on-TLS to be deployed opportunistically in
-   environments with RPC implementations that do not support TLS.
-   Specifications for RPC-based upper-layer protocols are free to
-   require stricter policies to guarantee that encryption or host
-   authentication is in use on every connection.
+   Further, Section 7 of the current document defines policies in line
+   with [RFC7435] which enable RPC-on-TLS to be deployed
+   opportunistically in environments that contain RPC implementations
+   that do not support TLS.  However, specifications for RPC-based
+   upper-layer protocols should choose to require even stricter policies
+   that guarantee encryption and host authentication is used for all RPC
+   transactions.  Enforcing the use of RPC-on-TLS is of particular
+   importance for existing upper-layer protocols whose security
+   infrastructure is weak.
 
    The protocol specification in the current document assumes that
    support for RPC, TLS, PKI, GSS-API, and DNSSEC is already available
@@ -215,16 +218,16 @@ Internet-Draft                RPC-Over-TLS                    April 2020
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
    "OPTIONAL" in this document are to be interpreted as described in BCP
-   14 [RFC2119] [RFC8174] when, and only when, they appear in all
-   capitals, as shown here.
 
 
 
-
-Myklebust & Lever       Expires October 10, 2020                [Page 4]
+Myklebust & Lever       Expires October 11, 2020                [Page 4]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
+
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
 
 3.  Terminology
 
@@ -271,17 +274,16 @@ Internet-Draft                RPC-Over-TLS                    April 2020
    call message MUST be zero.  The verifier accompanying the credential
    MUST be an AUTH_NONE verifier of length zero.
 
-   The flavor value of the verifier received in the RPC Reply message
-   from the server MUST be AUTH_NONE.  The length of the verifier's body
 
 
 
-
-Myklebust & Lever       Expires October 10, 2020                [Page 5]
+Myklebust & Lever       Expires October 11, 2020                [Page 5]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
 
+   The flavor value of the verifier received in the RPC Reply message
+   from the server MUST be AUTH_NONE.  The length of the verifier's body
    field is eight.  The bytes of the verifier's body field encode the
    ASCII characters "STARTTLS" as a fixed-length opaque.
 
@@ -328,15 +330,16 @@ Internet-Draft                RPC-Over-TLS                    April 2020
    implementations that do not support TLS requires limiting the
    combinations that are allowed and precisely specifying the role that
    each layer plays.  We also want to handle TLS such that an RPC
-   implementation can make the use of TLS invisible to existing RPC
-   consumer applications.
 
 
 
-Myklebust & Lever       Expires October 10, 2020                [Page 6]
+Myklebust & Lever       Expires October 11, 2020                [Page 6]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
+
+   implementation can make the use of TLS invisible to existing RPC
+   consumer applications.
 
    Each RPC server that supports RPC-over-TLS MUST possess a unique
    global identity (e.g., a certificate that is signed by a well-known
@@ -386,10 +389,7 @@ Internet-Draft                RPC-Over-TLS                    April 2020
 
 
 
-
-
-
-Myklebust & Lever       Expires October 10, 2020                [Page 7]
+Myklebust & Lever       Expires October 11, 2020                [Page 7]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
@@ -445,7 +445,7 @@ Internet-Draft                RPC-Over-TLS                    April 2020
 
 
 
-Myklebust & Lever       Expires October 10, 2020                [Page 8]
+Myklebust & Lever       Expires October 11, 2020                [Page 8]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
@@ -501,7 +501,7 @@ Internet-Draft                RPC-Over-TLS                    April 2020
 
 
 
-Myklebust & Lever       Expires October 10, 2020                [Page 9]
+Myklebust & Lever       Expires October 11, 2020                [Page 9]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
@@ -557,7 +557,7 @@ Internet-Draft                RPC-Over-TLS                    April 2020
 
 
 
-Myklebust & Lever       Expires October 10, 2020               [Page 10]
+Myklebust & Lever       Expires October 11, 2020               [Page 10]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
@@ -613,7 +613,7 @@ Internet-Draft                RPC-Over-TLS                    April 2020
 
 
 
-Myklebust & Lever       Expires October 10, 2020               [Page 11]
+Myklebust & Lever       Expires October 11, 2020               [Page 11]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
@@ -669,7 +669,7 @@ Internet-Draft                RPC-Over-TLS                    April 2020
 
 
 
-Myklebust & Lever       Expires October 10, 2020               [Page 12]
+Myklebust & Lever       Expires October 11, 2020               [Page 12]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
@@ -725,7 +725,7 @@ Internet-Draft                RPC-Over-TLS                    April 2020
 
 
 
-Myklebust & Lever       Expires October 10, 2020               [Page 13]
+Myklebust & Lever       Expires October 11, 2020               [Page 13]
 
 Internet-Draft                RPC-Over-TLS                    April 2020
 
@@ -745,12 +745,17 @@ Internet-Draft                RPC-Over-TLS                    April 2020
    actual security level may indeed be selected based on policy and
    without user intervention.
 
-   In cases where interoperability is a priority, the security benefits
-   of TLS are partially or entirely waived.  Implementations of the
-   mechanism described in the current document must take care to
+   In environments where interoperability is a priority, the security
+   benefits of TLS are partially or entirely waived.  Implementations of
+   the mechanism described in the current document must take care to
    accurately represent to all RPC consumers the level of security that
-   is actually in effect.  Implementations are REQUIRED to provide an
-   audit log of RPC-over-TLS security mode selection.
+   is actually in effect, and are REQUIRED to provide an audit log of
+   RPC-over-TLS security mode selection.
+
+   In all other cases, the adoption, implementation, and deployment of
+   RPC-based upper-layer protocols that enforce the use of TLS
+   authentication and encryption (when similar RPCSEC GSS services are
+   not in use) is strongly encouraged.
 
 7.1.1.  STRIPTLS Attacks
 
@@ -772,19 +777,44 @@ Internet-Draft                RPC-Over-TLS                    April 2020
       TLSA records are not available, this approach is strongly
       encouraged.
 
+
+
+
+
+Myklebust & Lever       Expires October 11, 2020               [Page 14]
+
+Internet-Draft                RPC-Over-TLS                    April 2020
+
+
+7.1.2.  Privacy Leakage Before Session Establishment
+
+   As mentioned earlier, communication between an RPC client and server
+   appears in the clear on the network prior to the establishment of a
+   TLS session.  This clear-text information includes transport
+   connection handshake exchanges, the RPC NULL procedure probing
+   support for TLS, and the initial parts of TLS session establishment.
+   Appendix C of [RFC8446] discusses precautions that can mitigate
+   exposure during the exchange of connnection handshake information and
+   TLS certificate material that might enable attackers to track the RPC
+   client.
+
+   For RPC-on-TLS, an additional exposure is the RPC NULL procedure that
+   acts as a STARTTLS message.  This RPC NULL procedure contains no
+   arguments or results, and the AUTH_TLS authentication flavor it uses
+   does not contain user information.
+
+   However, the NULL procedure can indicate to an attacker which RPC
+   program is to be wrapped in the TLS session associated with the
+   communicating RPC client/server pair.  This would suggest the type of
+   content being exchanged, information that an attacker can use to
+   improve her chances of breaking transport channel encryption.
+
 7.2.  TLS Identity Management on Clients
 
    The goal of the RPC-on-TLS protocol extension is to hide the content
    of RPC requests while they are in transit.  The RPC-on-TLS protocol
    by itself cannot protect against exposure of a user's RPC requests to
    other users on the same client.
-
-
-
-Myklebust & Lever       Expires October 10, 2020               [Page 14]
-
-Internet-Draft                RPC-Over-TLS                    April 2020
-
 
    Moreover, client implementations are free to transmit RPC requests
    for more than one RPC user using the same TLS session.  Depending on
@@ -804,6 +834,14 @@ Internet-Draft                RPC-Over-TLS                    April 2020
    flavor is in use addresses several longstanding weaknesses (as
    detailed in Appendix A).  TLS augments AUTH_SYS by providing both
    integrity protection and confidentiality that AUTH_SYS lacks.  TLS
+
+
+
+Myklebust & Lever       Expires October 11, 2020               [Page 15]
+
+Internet-Draft                RPC-Over-TLS                    April 2020
+
+
    protects data payloads, RPC headers, and user identities against
    monitoring and alteration while in transit.  TLS guards against the
    insertion or deletion of messages, thus also ensuring the integrity
@@ -832,16 +870,6 @@ Internet-Draft                RPC-Over-TLS                    April 2020
    a requirement that the mapping of 32-bit user and group ID values to
    user identities is the same on both the RPC client and server.
 
-
-
-
-
-
-Myklebust & Lever       Expires October 10, 2020               [Page 15]
-
-Internet-Draft                RPC-Over-TLS                    April 2020
-
-
 7.4.  Best Security Policy Practices
 
    RPC-over-TLS implementations and deployments are strongly encouraged
@@ -859,6 +887,16 @@ Internet-Draft                RPC-Over-TLS                    April 2020
       authentication fails.  GSS integrity and privacy services,
       therefore, can be disabled in favor of TLS encryption with peer
       authentication.
+
+
+
+
+
+
+Myklebust & Lever       Expires October 11, 2020               [Page 16]
+
+Internet-Draft                RPC-Over-TLS                    April 2020
+
 
 8.  IANA Considerations
 
@@ -889,15 +927,6 @@ Internet-Draft                RPC-Over-TLS                    April 2020
 
    Following Section 6 of [RFC7301], the authors request the allocation
    of the following value in the "Application-Layer Protocol Negotiation
-
-
-
-
-Myklebust & Lever       Expires October 10, 2020               [Page 16]
-
-Internet-Draft                RPC-Over-TLS                    April 2020
-
-
    (ALPN) Protocol IDs" registry.  The "sunrpc" string identifies SunRPC
    when used over TLS.
 
@@ -915,6 +944,15 @@ Internet-Draft                RPC-Over-TLS                    April 2020
               National Institute of Standards and Technology, "Secure
               Hash Standard, Federal Information Processing Standards
               Publication FIPS PUB 180-4", FIPS PUB 180-4, August 2015.
+
+
+
+
+
+Myklebust & Lever       Expires October 11, 2020               [Page 17]
+
+Internet-Draft                RPC-Over-TLS                    April 2020
+
 
    [I-D.ietf-tls-dtls13]
               Rescorla, E., Tschofenig, H., and N. Modadugu, "The
@@ -946,14 +984,6 @@ Internet-Draft                RPC-Over-TLS                    April 2020
               Specification Version 2", RFC 5531, DOI 10.17487/RFC5531,
               May 2009, <https://www.rfc-editor.org/info/rfc5531>.
 
-
-
-
-Myklebust & Lever       Expires October 10, 2020               [Page 17]
-
-Internet-Draft                RPC-Over-TLS                    April 2020
-
-
    [RFC5929]  Altman, J., Williams, N., and L. Zhu, "Channel Bindings
               for TLS", RFC 5929, DOI 10.17487/RFC5929, July 2010,
               <https://www.rfc-editor.org/info/rfc5929>.
@@ -968,6 +998,17 @@ Internet-Draft                RPC-Over-TLS                    April 2020
    [RFC7258]  Farrell, S. and H. Tschofenig, "Pervasive Monitoring Is an
               Attack", BCP 188, RFC 7258, DOI 10.17487/RFC7258, May
               2014, <https://www.rfc-editor.org/info/rfc7258>.
+
+
+
+
+
+
+
+Myklebust & Lever       Expires October 11, 2020               [Page 18]
+
+Internet-Draft                RPC-Over-TLS                    April 2020
+
 
    [RFC7301]  Friedl, S., Popov, A., Langley, A., and E. Stephan,
               "Transport Layer Security (TLS) Application-Layer Protocol
@@ -1002,14 +1043,6 @@ Internet-Draft                RPC-Over-TLS                    April 2020
               Protocol: TLSA", RFC 6698, DOI 10.17487/RFC6698, August
               2012, <https://www.rfc-editor.org/info/rfc6698>.
 
-
-
-
-Myklebust & Lever       Expires October 10, 2020               [Page 18]
-
-Internet-Draft                RPC-Over-TLS                    April 2020
-
-
    [RFC6973]  Cooper, A., Tschofenig, H., Aboba, B., Peterson, J.,
               Morris, J., Hansen, M., and R. Smith, "Privacy
               Considerations for Internet Protocols", RFC 6973,
@@ -1025,6 +1058,13 @@ Internet-Draft                RPC-Over-TLS                    April 2020
               Security (TLS) and Datagram Transport Layer Security
               (DTLS)", BCP 195, RFC 7525, DOI 10.17487/RFC7525, May
               2015, <https://www.rfc-editor.org/info/rfc7525>.
+
+
+
+Myklebust & Lever       Expires October 11, 2020               [Page 19]
+
+Internet-Draft                RPC-Over-TLS                    April 2020
+
 
    [RFC8166]  Lever, C., Ed., Simpson, W., and T. Talpey, "Remote Direct
               Memory Access Transport for Remote Procedure Call Version
@@ -1059,13 +1099,6 @@ Appendix A.  Known Weaknesses of the AUTH_SYS Authentication Flavor
    combination of these identifies the entity on the client that is
    making the request.
 
-
-
-Myklebust & Lever       Expires October 10, 2020               [Page 19]
-
-Internet-Draft                RPC-Over-TLS                    April 2020
-
-
    A string identifies peers (hosts) in each RPC request.  [RFC5531]
    does not specify any requirements for this string other than that is
    no longer than 255 octets.  It does not have to be the same from
@@ -1081,6 +1114,14 @@ Internet-Draft                RPC-Over-TLS                    April 2020
       not guarantee any security for the users or providers of a
       service, in itself.  The authentication provided by this scheme
       can be considered legitimate only when applications using this
+
+
+
+Myklebust & Lever       Expires October 11, 2020               [Page 20]
+
+Internet-Draft                RPC-Over-TLS                    April 2020
+
+
       scheme and the network can be secured externally, and privileged
       transport addresses are used for the communicating end-points (an
       example of this is the use of privileged TCP/UDP ports in UNIX
@@ -1110,31 +1151,35 @@ Acknowledgments
    with Stunnel TLS" [1].  His article inspired the mechanism described
    in this document.
 
-   Many thanks to Tigran Mkrtchyan for his work on the DESY prototype
-   and his feedback on the current document.
-
-
-
-
-
-Myklebust & Lever       Expires October 10, 2020               [Page 20]
-
-Internet-Draft                RPC-Over-TLS                    April 2020
-
+   Many thanks to Tigran Mkrtchyan and Rick Macklem for their work on
+   prototype implementations and feedback on the current document.
 
    Thanks to Derrell Piper for numerous suggestions that improved both
    this simple mechanism and the current document's security-related
    discussion.
 
-   The authors are grateful to Bill Baker, David Black, Alan DeKok, Lars
-   Eggert, Benjamin Kaduk, Olga Kornievskaia, Greg Marsden, Alex
-   McDonald, Justin Mazzola Paluska, Tom Talpey, and Martin Thomson for
-   their input and support of this work.
+   Many thanks to Transport Area Director Magnus Westerlund for his
+   sharp questions and careful reading of the final revisions of the
+   current document.
 
-   Lastly, special thanks to document shepherd David Noveck, Transport
-   Area Director Magnus Westerlund, NFSV4 Working Group Chairs Spencer
-   Shepler and Brian Pawlowski, and NFSV4 Working Group Secretary Thomas
-   Haynes for their guidance and oversight.
+   The authors are additionally grateful to Bill Baker, David Black,
+   Alan DeKok, Lars Eggert, Benjamin Kaduk, Olga Kornievskaia, Greg
+   Marsden, Alex McDonald, Justin Mazzola Paluska, Tom Talpey, and
+   Martin Thomson for their input and support of this work.
+
+   Finally, special thanks to NFSV4 Working Group Chair and document
+   shepherd David Noveck, NFSV4 Working Group Chairs Spencer Shepler and
+
+
+
+
+Myklebust & Lever       Expires October 11, 2020               [Page 21]
+
+Internet-Draft                RPC-Over-TLS                    April 2020
+
+
+   Brian Pawlowski, and NFSV4 Working Group Secretary Thomas Haynes for
+   their guidance and oversight.
 
 Authors' Addresses
 
@@ -1173,4 +1218,15 @@ Authors' Addresses
 
 
 
-Myklebust & Lever       Expires October 10, 2020               [Page 21]
+
+
+
+
+
+
+
+
+
+
+
+Myklebust & Lever       Expires October 11, 2020               [Page 22]

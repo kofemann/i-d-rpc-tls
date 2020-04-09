@@ -399,6 +399,7 @@
 <link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations">
 <link href="#rfc.section.7.1" rel="Chapter" title="7.1 Limitations of an Opportunistic Approach">
 <link href="#rfc.section.7.1.1" rel="Chapter" title="7.1.1 STRIPTLS Attacks">
+<link href="#rfc.section.7.1.2" rel="Chapter" title="7.1.2 Privacy Leakage Before Session Establishment">
 <link href="#rfc.section.7.2" rel="Chapter" title="7.2 TLS Identity Management on Clients">
 <link href="#rfc.section.7.3" rel="Chapter" title="7.3 Security Considerations for AUTH_SYS on TLS">
 <link href="#rfc.section.7.4" rel="Chapter" title="7.4 Best Security Policy Practices">
@@ -418,7 +419,7 @@
 
   <meta name="dct.creator" content="Myklebust, T. and C. Lever, Ed." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-nfsv4-rpc-tls-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2020-08" />
+  <meta name="dct.issued" scheme="ISO8601" content="2020-09" />
   <meta name="dct.abstract" content="This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.   " />
   <meta name="description" content="This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.   " />
 
@@ -446,8 +447,8 @@
 <td class="right">Oracle</td>
 </tr>
 <tr>
-<td class="left">Expires: October 10, 2020</td>
-<td class="right">April 8, 2020</td>
+<td class="left">Expires: October 11, 2020</td>
+<td class="right">April 9, 2020</td>
 </tr>
 
     	
@@ -463,7 +464,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on October 10, 2020.</p>
+<p>This Internet-Draft will expire on October 11, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -522,6 +523,8 @@
 <ul><li>7.1.   <a href="#rfc.section.7.1">Limitations of an Opportunistic Approach</a>
 </li>
 <ul><li>7.1.1.   <a href="#rfc.section.7.1.1">STRIPTLS Attacks</a>
+</li>
+<li>7.1.2.   <a href="#rfc.section.7.1.2">Privacy Leakage Before Session Establishment</a>
 </li>
 </ul><li>7.2.   <a href="#rfc.section.7.2">TLS Identity Management on Clients</a>
 </li>
@@ -586,8 +589,8 @@
 </dl>
 
 <p> </p>
-<p id="rfc.section.1.p.6">The current document specifies the implementation of RPC on an encrypted transport in a fashion that is transparent to upper-layer protocols based on RPC.  The imposition of encryption at the transport layer protects any upper-layer protocol that employs RPC, without alteration of that protocol.  </p>
-<p id="rfc.section.1.p.7">Further, the current document defines policies in line with <a href="#RFC7435" class="xref">[RFC7435]</a> which enable RPC-on-TLS to be deployed opportunistically in environments with RPC implementations that do not support TLS.  Specifications for RPC-based upper-layer protocols are free to require stricter policies to guarantee that encryption or host authentication is in use on every connection.  </p>
+<p id="rfc.section.1.p.6">The current document specifies the implementation of RPC on an encrypted transport in a manner that is transparent to upper-layer protocols based on RPC.  The imposition of encryption at the transport layer protects any upper-layer protocol that employs RPC, without alteration of that protocol.  </p>
+<p id="rfc.section.1.p.7">Further, <a href="#section:2AE49383-E6B2-4830-8407-995FEBF727F2" class="xref">Section 7</a> of the current document defines policies in line with <a href="#RFC7435" class="xref">[RFC7435]</a> which enable RPC-on-TLS to be deployed opportunistically in environments that contain RPC implementations that do not support TLS.  However, specifications for RPC-based upper-layer protocols should choose to require even stricter policies that guarantee encryption and host authentication is used for all RPC transactions.  Enforcing the use of RPC-on-TLS is of particular importance for existing upper-layer protocols whose security infrastructure is weak.  </p>
 <p id="rfc.section.1.p.8">The protocol specification in the current document assumes that support for RPC, TLS, PKI, GSS-API, and DNSSEC is already available in an RPC implementation where TLS support is to be added.  </p>
 <h1 id="rfc.section.2">
 <a href="#rfc.section.2">2.</a> <a href="#section:024237C9-5504-49B4-A2D3-2D2A5EFBB967" id="section:024237C9-5504-49B4-A2D3-2D2A5EFBB967">Requirements Language</a>
@@ -834,7 +837,8 @@
 <a href="#rfc.section.7.1">7.1.</a> <a href="#section:51737BB5-2B65-441E-AD1D-7EBF5123C079" id="section:51737BB5-2B65-441E-AD1D-7EBF5123C079">Limitations of an Opportunistic Approach</a>
 </h1>
 <p id="rfc.section.7.1.p.1">The purpose of using an explicitly opportunistic approach is to enable interoperation with implementations that do not support RPC-over-TLS.  A range of options is allowed by this approach, from "no peer authentication or encryption" to "server-only authentication with encryption" to "mutual authentication with encryption".  The actual security level may indeed be selected based on policy and without user intervention.  </p>
-<p id="rfc.section.7.1.p.2">In cases where interoperability is a priority, the security benefits of TLS are partially or entirely waived.  Implementations of the mechanism described in the current document must take care to accurately represent to all RPC consumers the level of security that is actually in effect.  Implementations are REQUIRED to provide an audit log of RPC-over-TLS security mode selection.  </p>
+<p id="rfc.section.7.1.p.2">In environments where interoperability is a priority, the security benefits of TLS are partially or entirely waived.  Implementations of the mechanism described in the current document must take care to accurately represent to all RPC consumers the level of security that is actually in effect, and are REQUIRED to provide an audit log of RPC-over-TLS security mode selection.  </p>
+<p id="rfc.section.7.1.p.3">In all other cases, the adoption, implementation, and deployment of RPC-based upper-layer protocols that enforce the use of TLS authentication and encryption (when similar RPCSEC GSS services are not in use) is strongly encouraged.  </p>
 <h1 id="rfc.section.7.1.1">
 <a href="#rfc.section.7.1.1">7.1.1.</a> <a href="#section:8894BDD2-0E0B-47A3-A2CB-70E4D93B55B0" id="section:8894BDD2-0E0B-47A3-A2CB-70E4D93B55B0">STRIPTLS Attacks</a>
 </h1>
@@ -846,6 +850,12 @@
 </ul>
 
 <p> </p>
+<h1 id="rfc.section.7.1.2">
+<a href="#rfc.section.7.1.2">7.1.2.</a> <a href="#section:9C03417D-1D3D-4D43-BC43-6F7387736AF7" id="section:9C03417D-1D3D-4D43-BC43-6F7387736AF7">Privacy Leakage Before Session Establishment</a>
+</h1>
+<p id="rfc.section.7.1.2.p.1">As mentioned earlier, communication between an RPC client and server appears in the clear on the network prior to the establishment of a TLS session.  This clear-text information includes transport connection handshake exchanges, the RPC NULL procedure probing support for TLS, and the initial parts of TLS session establishment.  Appendix C of <a href="#RFC8446" class="xref">[RFC8446]</a> discusses precautions that can mitigate exposure during the exchange of connnection handshake information and TLS certificate material that might enable attackers to track the RPC client.  </p>
+<p id="rfc.section.7.1.2.p.2">For RPC-on-TLS, an additional exposure is the RPC NULL procedure that acts as a STARTTLS message.  This RPC NULL procedure contains no arguments or results, and the AUTH_TLS authentication flavor it uses does not contain user information.  </p>
+<p id="rfc.section.7.1.2.p.3">However, the NULL procedure can indicate to an attacker which RPC program is to be wrapped in the TLS session associated with the communicating RPC client/server pair.  This would suggest the type of content being exchanged, information that an attacker can use to improve her chances of breaking transport channel encryption.  </p>
 <h1 id="rfc.section.7.2">
 <a href="#rfc.section.7.2">7.2.</a> <a href="#section:B9F8A982-CB0E-40FC-9460-680E89DB0001" id="section:B9F8A982-CB0E-40FC-9460-680E89DB0001">TLS Identity Management on Clients</a>
 </h1>
@@ -1052,10 +1062,11 @@
 <p> </p>
 <h1 id="rfc.acknowledgments"><a href="#rfc.acknowledgments">Acknowledgments</a></h1>
 <p id="rfc.section.B.p.1">Special mention goes to Charles Fisher, author of <a href="https://www.linuxjournal.com/content/encrypting-nfsv4-stunnel-tls">"Encrypting NFSv4 with Stunnel TLS" </a>.  His article inspired the mechanism described in this document.  </p>
-<p id="rfc.section.B.p.2">Many thanks to Tigran Mkrtchyan for his work on the DESY prototype and his feedback on the current document.  </p>
+<p id="rfc.section.B.p.2">Many thanks to Tigran Mkrtchyan and Rick Macklem for their work on prototype implementations and feedback on the current document.  </p>
 <p id="rfc.section.B.p.3">Thanks to Derrell Piper for numerous suggestions that improved both this simple mechanism and the current document's security-related discussion.  </p>
-<p id="rfc.section.B.p.4">The authors are grateful to Bill Baker, David Black, Alan DeKok, Lars Eggert, Benjamin Kaduk, Olga Kornievskaia, Greg Marsden, Alex McDonald, Justin Mazzola Paluska, Tom Talpey, and Martin Thomson for their input and support of this work.  </p>
-<p id="rfc.section.B.p.5">Lastly, special thanks to document shepherd David Noveck, Transport Area Director Magnus Westerlund, NFSV4 Working Group Chairs Spencer Shepler and Brian Pawlowski, and NFSV4 Working Group Secretary Thomas Haynes for their guidance and oversight.  </p>
+<p id="rfc.section.B.p.4">Many thanks to Transport Area Director Magnus Westerlund for his sharp questions and careful reading of the final revisions of the current document.  </p>
+<p id="rfc.section.B.p.5">The authors are additionally grateful to Bill Baker, David Black, Alan DeKok, Lars Eggert, Benjamin Kaduk, Olga Kornievskaia, Greg Marsden, Alex McDonald, Justin Mazzola Paluska, Tom Talpey, and Martin Thomson for their input and support of this work.  </p>
+<p id="rfc.section.B.p.6">Finally, special thanks to NFSV4 Working Group Chair and document shepherd David Noveck, NFSV4 Working Group Chairs Spencer Shepler and Brian Pawlowski, and NFSV4 Working Group Secretary Thomas Haynes for their guidance and oversight.  </p>
 <h1 id="rfc.authors"><a href="#rfc.authors">Authors' Addresses</a></h1>
 <div class="avoidbreak">
   <address class="vcard">
