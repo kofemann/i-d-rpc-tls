@@ -383,9 +383,9 @@
 <link href="#rfc.section.4.2.1" rel="Chapter" title="4.2.1 Using TLS with RPCSEC GSS">
 <link href="#rfc.section.5" rel="Chapter" title="5 TLS Requirements">
 <link href="#rfc.section.5.1" rel="Chapter" title="5.1 Base Transport Considerations">
-<link href="#rfc.section.5.1.1" rel="Chapter" title="5.1.1 Operation on TCP">
-<link href="#rfc.section.5.1.2" rel="Chapter" title="5.1.2 Operation on UDP">
-<link href="#rfc.section.5.1.3" rel="Chapter" title="5.1.3 Operation on Other Transports">
+<link href="#rfc.section.5.1.1" rel="Chapter" title="5.1.1 RPC-on-TLS Operation on TCP">
+<link href="#rfc.section.5.1.2" rel="Chapter" title="5.1.2 RPC-on-TLS Operation on UDP">
+<link href="#rfc.section.5.1.3" rel="Chapter" title="5.1.3 RPC-on-TLS Operation on Other Transports">
 <link href="#rfc.section.5.2" rel="Chapter" title="5.2 TLS Peer Authentication">
 <link href="#rfc.section.5.2.1" rel="Chapter" title="5.2.1 X.509 Certificates Using PKIX trust">
 <link href="#rfc.section.5.2.2" rel="Chapter" title="5.2.2 X.509 Certificates Using Fingerprints">
@@ -419,7 +419,7 @@
 
   <meta name="dct.creator" content="Myklebust, T. and C. Lever, Ed." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-nfsv4-rpc-tls-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2020-09" />
+  <meta name="dct.issued" scheme="ISO8601" content="2020-20" />
   <meta name="dct.abstract" content="This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.   " />
   <meta name="description" content="This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.   " />
 
@@ -447,8 +447,8 @@
 <td class="right">Oracle</td>
 </tr>
 <tr>
-<td class="left">Expires: October 11, 2020</td>
-<td class="right">April 9, 2020</td>
+<td class="left">Expires: October 22, 2020</td>
+<td class="right">April 20, 2020</td>
 </tr>
 
     	
@@ -464,7 +464,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on October 11, 2020.</p>
+<p>This Internet-Draft will expire on October 22, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -492,11 +492,11 @@
 </li>
 <ul><li>5.1.   <a href="#rfc.section.5.1">Base Transport Considerations</a>
 </li>
-<ul><li>5.1.1.   <a href="#rfc.section.5.1.1">Operation on TCP</a>
+<ul><li>5.1.1.   <a href="#rfc.section.5.1.1">RPC-on-TLS Operation on TCP</a>
 </li>
-<li>5.1.2.   <a href="#rfc.section.5.1.2">Operation on UDP</a>
+<li>5.1.2.   <a href="#rfc.section.5.1.2">RPC-on-TLS Operation on UDP</a>
 </li>
-<li>5.1.3.   <a href="#rfc.section.5.1.3">Operation on Other Transports</a>
+<li>5.1.3.   <a href="#rfc.section.5.1.3">RPC-on-TLS Operation on Other Transports</a>
 </li>
 </ul><li>5.2.   <a href="#rfc.section.5.2">TLS Peer Authentication</a>
 </li>
@@ -610,23 +610,15 @@
 <h1 id="rfc.section.4.1">
 <a href="#rfc.section.4.1">4.1.</a> <a href="#section:0A03673B-14BA-4228-8A8A-F76AA318CA73" id="section:0A03673B-14BA-4228-8A8A-F76AA318CA73">Discovering Server-side TLS Support</a>
 </h1>
-<p id="rfc.section.4.1.p.1">The mechanism described in this document interoperates fully with RPC implementations that do not support TLS.  The use of TLS is automatically disabled in these cases.  </p>
-<p id="rfc.section.4.1.p.2">To achieve this, we introduce a new RPC authentication flavor called AUTH_TLS.  This new flavor signals that the client wants to initiate TLS negotiation if the server supports it.  Except for the modifications described in this section, the RPC protocol is unaware of security encapsulation.  </p>
-<p id="rfc.section.4.1.p.3">The length of the opaque data constituting the credential sent in the call message MUST be zero.  The verifier accompanying the credential MUST be an AUTH_NONE verifier of length zero.  </p>
-<p id="rfc.section.4.1.p.4">The flavor value of the verifier received in the RPC Reply message from the server MUST be AUTH_NONE.  The length of the verifier's body field is eight.  The bytes of the verifier's body field encode the ASCII characters "STARTTLS" as a fixed-length opaque.  </p>
-<p id="rfc.section.4.1.p.5">When an RPC client is ready to begin sending encrypted traffic to a server, it starts with a NULL RPC request with an auth_flavor of AUTH_TLS.  The value of AUTH_TLS is defined in <a href="#section:2CD51855-CE40-4B8D-A220-F211C477964F" class="xref">Section 8.1</a>A.  The NULL request is made to the same port as if TLS were not in use.  </p>
-<p id="rfc.section.4.1.p.6">The RPC server can respond in one of three ways: </p>
-
-<ul>
-<li>If the RPC server does not recognize the AUTH_TLS authentication flavor, it responds with a reject_stat of AUTH_ERROR.  The RPC client then knows that this server does not support TLS.  </li>
-<li>If the RPC server accepts the NULL RPC procedure but fails to return an AUTH_NONE verifier containing the "STARTTLS" token in the NULL Reply, the RPC client knows that this server does not support TLS.  </li>
-<li>If the RPC server accepts the NULL RPC procedure and returns an AUTH_NONE verifier containing the "STARTTLS" token in the NULL Reply, the RPC client immediately initiates a TLS session.  This NULL Reply signals that the RPC server is prepared for the client to send a "ClientHello" message.  </li>
-</ul>
-
-<p> </p>
-<p id="rfc.section.4.1.p.7">Once the TLS handshake is complete, the RPC client and server have established a secure channel for communicating.  The client MUST switch to a security flavor other than AUTH_TLS within that channel, presumably after negotiating down redundant RPCSEC_GSS privacy and integrity services.  </p>
-<p id="rfc.section.4.1.p.8">If TLS negotiation fails for any reason, the RPC client reports this failure to the upper-layer application the same way it would report an AUTH_ERROR rejection from the RPC server.  </p>
-<p id="rfc.section.4.1.p.9">If an RPC client attempts to use AUTH_TLS for anything other than the NULL RPC procedure, the RPC server MUST respond with a reject_stat of AUTH_ERROR.  </p>
+<p id="rfc.section.4.1.p.1">The mechanism described in the current document interoperates fully with RPC implementations that do not support TLS.  Policy settings on the RPC-on-TLS-enabled peer determine whether RPC operation continues without the use of TLS or RPC operation is not permitted.  </p>
+<p id="rfc.section.4.1.p.2">To achieve this, we introduce a new RPC authentication flavor called AUTH_TLS.  This new flavor signals that the client wants to initiate TLS negotiation if the server supports it.  Except for the modifications described in this section, the RPC protocol is unaware of security encapsulation at the transport layer.  </p>
+<p id="rfc.section.4.1.p.3">When an RPC client is ready to begin a TLS session, it sends a NULL RPC procedure with an auth_flavor of AUTH_TLS.  The value of AUTH_TLS is defined in <a href="#section:2CD51855-CE40-4B8D-A220-F211C477964F" class="xref">Section 8.1</a>.  The NULL request is made to the same port as if TLS were not in use.  </p>
+<p id="rfc.section.4.1.p.4">The length of the opaque data constituting the credential sent in the RPC Call message MUST be zero.  The verifier accompanying the credential MUST be an AUTH_NONE verifier of length zero.  </p>
+<p id="rfc.section.4.1.p.5">The flavor value of the verifier in the RPC Reply message received from the server MUST be AUTH_NONE.  The length of the verifier's body field is eight.  The bytes of the verifier's body field encode the ASCII characters "STARTTLS" as a fixed-length opaque.  </p>
+<p id="rfc.section.4.1.p.6">If the RPC server replies with a reply_stat of MSG_ACCEPTED and an AUTH_NONE verifier containing the "STARTTLS" token, the RPC client follows with a "ClientHello" message.  The client MAY proceed with TLS session establishment even if the Reply's accept_stat is not SUCCESS (for example, if the accept_stat is PROG_UNAVAIL).  Once the TLS handshake is complete, the RPC client and server have established a secure channel for communicating.  </p>
+<p id="rfc.section.4.1.p.7">If the Reply's reply_stat is MSG_ACCEPTED but the verifier does not contain the "STARTTLS" token, or if the Reply's reply_stat is MSG_DENIED, the RPC client MUST NOT send a "ClientHello" message.  RPC operation can continue, but in the clear.  </p>
+<p id="rfc.section.4.1.p.8">If, after a successful RPC AUTH_TLS probe, the subsequent TLS handshake should fail for any reason, the RPC client reports this failure to the upper-layer application the same way it reports an AUTH_ERROR rejection from the RPC server.  </p>
+<p id="rfc.section.4.1.p.9">If an RPC client uses the AUTH_TLS authentication flavor on any procedure other than the NULL procedure, or an RPC client sends an RPC AUTH_TLS probe within an existing TLS session, the RPC server MUST reject that RPC Call by setting the reply_stat field to MSG_DENIED, the reject_stat field to AUTH_ERROR, and the auth_stat field to AUTH_BADCRED.  </p>
 <h1 id="rfc.section.4.2">
 <a href="#rfc.section.4.2">4.2.</a> <a href="#section:6EDEF553-C95A-47D7-ABBA-0B537FE3A959" id="section:6EDEF553-C95A-47D7-ABBA-0B537FE3A959">Authentication</a>
 </h1>
@@ -667,24 +659,29 @@
 <h1 id="rfc.section.5.1">
 <a href="#rfc.section.5.1">5.1.</a> <a href="#section:CC204592-F561-49BD-B1C9-DE0FF7F0E7AB" id="section:CC204592-F561-49BD-B1C9-DE0FF7F0E7AB">Base Transport Considerations</a>
 </h1>
+<p id="rfc.section.5.1.p.1">There is traditionally a strong association between an RPC program and a destination port number.  The use of TLS or DTLS does not change that association.  Thus it is frequently -- though not always -- the case that a single TLS session carries traffic for only one RPC program.  </p>
 <h1 id="rfc.section.5.1.1">
-<a href="#rfc.section.5.1.1">5.1.1.</a> <a href="#section:74B43C7E-5ADC-4FBD-B4EA-FF8F470994A8" id="section:74B43C7E-5ADC-4FBD-B4EA-FF8F470994A8">Operation on TCP</a>
+<a href="#rfc.section.5.1.1">5.1.1.</a> <a href="#section:74B43C7E-5ADC-4FBD-B4EA-FF8F470994A8" id="section:74B43C7E-5ADC-4FBD-B4EA-FF8F470994A8">RPC-on-TLS Operation on TCP</a>
 </h1>
-<p id="rfc.section.5.1.1.p.1">The use of TLS <a href="#RFC8446" class="xref">[RFC8446]</a> protects RPC on TCP connections.  Typically, once a client completes the TCP handshake and performs RPC service discovery via NULL RPC operations, it uses the mechanism described in <a href="#section:0A03673B-14BA-4228-8A8A-F76AA318CA73" class="xref">Section 4.1</a> to discover TLS support.  It can then negotiate a TLS session on that connection.  </p>
-<p id="rfc.section.5.1.1.p.2">After establishing a TLS session on a connection, an RPC server MUST reject with a reject_stat of AUTH_ERROR any subsequent RPC Calls over a TLS-protected connection that are outside of the TLS session on that connection.  Likewise, an RPC client MUST silently discard any subsequent RPC Replies over the connection that are outside of a TLS session.  </p>
-<p id="rfc.section.5.1.1.p.3">This restriction includes reverse-direction RPC operations (i.e., RPC Calls initiated on the server-end of the connection).  An RPC client receiving a reverse-direction call on a connection outside of an existing TLS session MUST reject the request with a reject_stat of AUTH_ERROR.  </p>
-<p id="rfc.section.5.1.1.p.4">An RPC peer terminates a TLS session by sending a TLS closure alert, or by closing the TLS-protected TCP connection.  </p>
+<p id="rfc.section.5.1.1.p.1">The use of the Transport Layer Security (TLS) protocol <a href="#RFC8446" class="xref">[RFC8446]</a> protects RPC on TCP connections.  Typically, once an RPC client completes the TCP handshake, it uses the mechanism described in <a href="#section:0A03673B-14BA-4228-8A8A-F76AA318CA73" class="xref">Section 4.1</a> to discover RPC-on-TLS support for that connection.  If spurious traffic appears on a TCP connection between the initial clear-text AUTH_TLS probe and the TLS session handshake, receivers MUST discard that data without response and then SHOULD drop the connection.  </p>
+<p id="rfc.section.5.1.1.p.2">The protocol convention specified in the current document assumes there can be no more than one concurrent TLS session per TCP connection.  This is true of current generations of TLS, but might be different in a future version of TLS.  </p>
+<p id="rfc.section.5.1.1.p.3">Once a TLS session is established on a TCP connection, no further clear-text communication can occur on that connection until the session is terminated.  The use of TLS does not alter RPC record framing used on TCP transports.  </p>
+<p id="rfc.section.5.1.1.p.4">Furthermore, if an RPC server responds with PROG_UNAVAIL to an RPC Call within an established TLS session, that does not imply that RPC server will subsequently reject the same RPC program on a different TCP connection.  </p>
+<p id="rfc.section.5.1.1.p.5">Backchannel operation occurs only on connected transports such as TCP.  To protect backchannel operations, an RPC server uses the existing TLS session on that connection to send backchannel operations.  The server does not attempt to establish a TLS session on a TCP connection for backchannel operation.  </p>
+<p id="rfc.section.5.1.1.p.6">When operation is complete, an RPC peer terminates a TLS session by sending a TLS Closure Alert and may then close the TCP connection.  </p>
 <h1 id="rfc.section.5.1.2">
-<a href="#rfc.section.5.1.2">5.1.2.</a> <a href="#section:B8BF600E-96DC-4C82-AADF-D593826E9B75" id="section:B8BF600E-96DC-4C82-AADF-D593826E9B75">Operation on UDP</a>
+<a href="#rfc.section.5.1.2">5.1.2.</a> <a href="#section:B8BF600E-96DC-4C82-AADF-D593826E9B75" id="section:B8BF600E-96DC-4C82-AADF-D593826E9B75">RPC-on-TLS Operation on UDP</a>
 </h1>
-<p id="rfc.section.5.1.2.p.1">RPC over UDP is protected using DTLS <a href="#I-D.ietf-tls-dtls13" class="xref">[I-D.ietf-tls-dtls13]</a>.  As soon as a client initializes a socket for use with an unfamiliar server, it uses the mechanism described in <a href="#section:0A03673B-14BA-4228-8A8A-F76AA318CA73" class="xref">Section 4.1</a> to discover DTLS support and then negotiate a DTLS session.  Connected operation is RECOMMENDED.  </p>
-<p id="rfc.section.5.1.2.p.2">Using a DTLS transport does not introduce reliable or in-order semantics to RPC on UDP.  Also, DTLS does not support fragmentation of RPC messages.  Each RPC message MUST fit in a single DTLS datagram.  DTLS encapsulation has overhead, which reduces the effective Path MTU (PMTU) and thus the maximum RPC payload size.  </p>
-<p id="rfc.section.5.1.2.p.3">DTLS does not detect STARTTLS replay.  Sending a TLS closure alert terminates a DTLS session.  Subsequent RPC messages passing between the client and server are no longer protected until a new TLS session is established.  </p>
+<p id="rfc.section.5.1.2.p.1">RPC over UDP is protected using the Datagram Transport Layer Security (DTLS) protocol <a href="#I-D.ietf-tls-dtls13" class="xref">[I-D.ietf-tls-dtls13]</a>.  </p>
+<p id="rfc.section.5.1.2.p.2">Using DTLS does not introduce reliable or in-order semantics to RPC on UDP.  Each RPC message MUST fit in a single DTLS record.  DTLS encapsulation has overhead, which reduces the effective Path MTU (PMTU) and thus the maximum RPC payload size.  The use of DTLS record replay protection is REQUIRED when transporting RPC traffic.  </p>
+<p id="rfc.section.5.1.2.p.3">As soon as a client initializes a UDP socket for use with an RPC server, it uses the mechanism described in <a href="#section:0A03673B-14BA-4228-8A8A-F76AA318CA73" class="xref">Section 4.1</a> to discover DTLS support for an RPC program on a particular port.  It then negotiates a DTLS session.  </p>
+<p id="rfc.section.5.1.2.p.4">When using connectionless operation, each DTLS session endpoint is identified by its 5-tuple -- the source and destination IP address and port numbers, along with the UDP transport protocol number (17).  When using connected operation, the DTLS session endpoints are identified by connection ID (CID), as described in <a href="#I-D.ietf-tls-dtls-connection-id" class="xref">[I-D.ietf-tls-dtls-connection-id]</a>.  Connected operation is strongly RECOMMENDED.  </p>
+<p id="rfc.section.5.1.2.p.5">Sending a TLS Closure Alert terminates a DTLS session.  Subsequent RPC messages exchanged between the RPC client and server are no longer protected until a new DTLS session is established.  </p>
 <h1 id="rfc.section.5.1.3">
-<a href="#rfc.section.5.1.3">5.1.3.</a> <a href="#section:BFCC24B1-E6D4-4ABC-A5F3-B71E8E96878F" id="section:BFCC24B1-E6D4-4ABC-A5F3-B71E8E96878F">Operation on Other Transports</a>
+<a href="#rfc.section.5.1.3">5.1.3.</a> <a href="#section:BFCC24B1-E6D4-4ABC-A5F3-B71E8E96878F" id="section:BFCC24B1-E6D4-4ABC-A5F3-B71E8E96878F">RPC-on-TLS Operation on Other Transports</a>
 </h1>
-<p id="rfc.section.5.1.3.p.1">RPC-over-RDMA can make use of Transport Layer Security below the RDMA transport layer <a href="#RFC8166" class="xref">[RFC8166]</a>.  The exact mechanism is not within the scope of this document.  Because there might not be other provisions to exchange client and server certificates, authentication material exchange would need to be provided by facilities within a future RPC-over-RDMA transport.  </p>
-<p id="rfc.section.5.1.3.p.2">Transports that provide intrinsic TLS-level security (e.g., QUIC) would need to be addressed separately from the current document.  In such cases, the use of TLS would not be opportunistic as it is for TCP or UDP.  </p>
+<p id="rfc.section.5.1.3.p.1">Transports that provide intrinsic TLS-level security (e.g., QUIC) need to be addressed separately from the current document.  In such cases, the use of TLS is not opportunistic as it can be for TCP or UDP.  </p>
+<p id="rfc.section.5.1.3.p.2">RPC-over-RDMA can make use of transport layer security below the RDMA transport layer <a href="#RFC8166" class="xref">[RFC8166]</a>.  The exact mechanism is not within the scope of this document.  Because there might not be other provisions to exchange client and server certificates, authentication material exchange needs to be provided by facilities within a future RPC-over-RDMA transport protocol.  </p>
 <h1 id="rfc.section.5.2">
 <a href="#rfc.section.5.2">5.2.</a> <a href="#section:936921ED-67BB-46BF-B316-6740E07F6652" id="section:936921ED-67BB-46BF-B316-6740E07F6652">TLS Peer Authentication</a>
 </h1>
@@ -853,9 +850,9 @@
 <h1 id="rfc.section.7.1.2">
 <a href="#rfc.section.7.1.2">7.1.2.</a> <a href="#section:9C03417D-1D3D-4D43-BC43-6F7387736AF7" id="section:9C03417D-1D3D-4D43-BC43-6F7387736AF7">Privacy Leakage Before Session Establishment</a>
 </h1>
-<p id="rfc.section.7.1.2.p.1">As mentioned earlier, communication between an RPC client and server appears in the clear on the network prior to the establishment of a TLS session.  This clear-text information includes transport connection handshake exchanges, the RPC NULL procedure probing support for TLS, and the initial parts of TLS session establishment.  Appendix C of <a href="#RFC8446" class="xref">[RFC8446]</a> discusses precautions that can mitigate exposure during the exchange of connnection handshake information and TLS certificate material that might enable attackers to track the RPC client.  </p>
-<p id="rfc.section.7.1.2.p.2">For RPC-on-TLS, an additional exposure is the RPC NULL procedure that acts as a STARTTLS message.  This RPC NULL procedure contains no arguments or results, and the AUTH_TLS authentication flavor it uses does not contain user information.  </p>
-<p id="rfc.section.7.1.2.p.3">However, the NULL procedure can indicate to an attacker which RPC program is to be wrapped in the TLS session associated with the communicating RPC client/server pair.  This would suggest the type of content being exchanged, information that an attacker can use to improve her chances of breaking transport channel encryption.  </p>
+<p id="rfc.section.7.1.2.p.1">As mentioned earlier, communication between an RPC client and server appears in the clear on the network prior to the establishment of a TLS session.  This clear-text information usually includes transport connection handshake exchanges, the RPC NULL procedure probing support for TLS, and the initial parts of TLS session establishment.  Appendix C of <a href="#RFC8446" class="xref">[RFC8446]</a> discusses precautions that can mitigate exposure during the exchange of connnection handshake information and TLS certificate material that might enable attackers to track the RPC client.  </p>
+<p id="rfc.section.7.1.2.p.2">Any RPC traffic that appears on the network before a TLS session has been established is vulnerable to monitoring or undetected modification.  A secure client implementation limits or prevents any RPC exchanges that are not protected.  </p>
+<p id="rfc.section.7.1.2.p.3">The exception to this edict is the initial RPC NULL procedure that acts as a STARTTLS message, which cannot be protected.  This RPC NULL procedure contains no arguments or results, and the AUTH_TLS authentication flavor it uses does not contain user information.  </p>
 <h1 id="rfc.section.7.2">
 <a href="#rfc.section.7.2">7.2.</a> <a href="#section:B9F8A982-CB0E-40FC-9460-680E89DB0001" id="section:B9F8A982-CB0E-40FC-9460-680E89DB0001">TLS Identity Management on Clients</a>
 </h1>
@@ -928,6 +925,11 @@
 <td class="reference"><b id="FIPS.180-4">[FIPS.180-4]</b></td>
 <td class="top">
 <a>National Institute of Standards and Technology</a>, "<a>Secure Hash Standard, Federal Information Processing Standards Publication FIPS PUB 180-4</a>", FIPS PUB 180-4, August 2015.</td>
+</tr>
+<tr>
+<td class="reference"><b id="I-D.ietf-tls-dtls-connection-id">[I-D.ietf-tls-dtls-connection-id]</b></td>
+<td class="top">
+<a>Rescorla, E.</a>, <a>Tschofenig, H.</a> and <a>T. Fossati</a>, "<a href="https://tools.ietf.org/html/draft-ietf-tls-dtls-connection-id-07">Connection Identifiers for DTLS 1.2</a>", Internet-Draft draft-ietf-tls-dtls-connection-id-07, October 2019.</td>
 </tr>
 <tr>
 <td class="reference"><b id="I-D.ietf-tls-dtls13">[I-D.ietf-tls-dtls13]</b></td>
@@ -1050,7 +1052,7 @@
 <ul class="empty"><li>It should be noted that use of this flavor of authentication does not guarantee any security for the users or providers of a service, in itself.  The authentication provided by this scheme can be considered legitimate only when applications using this scheme and the network can be secured externally, and privileged transport addresses are used for the communicating end-points (an example of this is the use of privileged TCP/UDP ports in UNIX systems -- note that not all systems enforce privileged transport address mechanisms).  </li></ul>
 
 <p> </p>
-<p id="rfc.section.A.p.5">It should be clear, therefore, that AUTH_SYS by itself offers little to no communication security: </p>
+<p id="rfc.section.A.p.5">It should be clear, therefore, that AUTH_SYS by itself (i.e., without strong client authentication) offers little to no communication security: </p>
 
 <ol>
 <li>It does not protect the confidentiality or integrity of RPC requests, users, or payloads, relying instead on "external" security.  </li>
