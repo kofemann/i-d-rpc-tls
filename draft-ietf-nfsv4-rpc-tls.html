@@ -557,8 +557,10 @@
   <h1 id="rfc.section.1">
 <a href="#rfc.section.1">1.</a> <a href="#section:8F035331-8EB8-4FBC-973A-673FBA5FE952" id="section:8F035331-8EB8-4FBC-973A-673FBA5FE952">Introduction</a>
 </h1>
-<p id="rfc.section.1.p.1">In 2014 the IETF published <a href="#RFC7258" class="xref">[RFC7258]</a>, which recognized that unauthorized observation of network traffic had become widespread and was a subversive threat to all who make use of the Internet at large.  It strongly recommended that newly defined Internet protocols should make a genuine effort to mitigate monitoring attacks.  Typically this mitigation is done by encrypting data in transit.  </p>
-<p id="rfc.section.1.p.2">The Remote Procedure Call version 2 protocol has been a Proposed Standard for three decades (see <a href="#RFC5531" class="xref">[RFC5531]</a> and its antecedents).  Over twenty years ago, Eisler et al. first introduced RPCSEC GSS as an in-transit encryption mechanism for RPC <a href="#RFC2203" class="xref">[RFC2203]</a>.  However, experience has shown that RPCSEC GSS with in-transit encryption can be challenging to use in practice: </p>
+<p id="rfc.section.1.p.1">RFC Editor: Please remove the following paragraph before this document is published.  </p>
+<p id="rfc.section.1.p.2">The source for this draft is maintained in GitHub.  Suggested changes should be submitted as pull requests at <a href="https://github.com/chucklever/i-d-rpc-tls">https://github.com/chucklever/i-d-rpc-tls </a>.  Instructions are on that page as well.  Editorial changes can be managed in GitHub, but any substantive change should be discussed on the nfsv4@ietf.org mailing list.  </p>
+<p id="rfc.section.1.p.3">In 2014 the IETF published <a href="#RFC7258" class="xref">[RFC7258]</a>, which recognized that unauthorized observation of network traffic had become widespread and was a subversive threat to all who make use of the Internet at large.  It strongly recommended that newly defined Internet protocols should make a genuine effort to mitigate monitoring attacks.  Typically this mitigation is done by encrypting data in transit.  </p>
+<p id="rfc.section.1.p.4">The Remote Procedure Call version 2 protocol has been a Proposed Standard for three decades (see <a href="#RFC5531" class="xref">[RFC5531]</a> and its antecedents).  Over twenty years ago, Eisler et al. first introduced RPCSEC GSS as an in-transit encryption mechanism for RPC <a href="#RFC2203" class="xref">[RFC2203]</a>.  However, experience has shown that RPCSEC GSS with in-transit encryption can be challenging to use in practice: </p>
 
 <ul>
 <li>Parts of each RPC header remain in clear-text, constituting a significant security exposure.  </li>
@@ -566,7 +568,7 @@
 </ul>
 
 <p> However strong GSS-provided confidentiality is, it cannot provide any security if the challenges of using it result in choosing not to deploy it at all.  </p>
-<p id="rfc.section.1.p.3">Moreover, the use of AUTH_SYS remains common despite the adverse effects that acceptance of UIDs and GIDs from unauthenticated clients brings with it.  Continued use is in part because: </p>
+<p id="rfc.section.1.p.5">Moreover, the use of AUTH_SYS remains common despite the adverse effects that acceptance of UIDs and GIDs from unauthenticated clients brings with it.  Continued use is in part because: </p>
 
 <ul>
 <li>Per-client deployment and administrative costs are not scalable.  Administrators must provide keying material for each RPC client, including transient clients.  </li>
@@ -574,8 +576,8 @@
 </ul>
 
 <p> </p>
-<p id="rfc.section.1.p.4">The alternative described in the current document is to employ a transport layer security mechanism that can protect the confidentiality of each RPC connection transparently to RPC and upper-layer protocols.  The Transport Layer Security protocol <a href="#RFC8446" class="xref">[RFC8446]</a> (TLS) is a well-established Internet building block that protects many standard Internet protocols such as the Hypertext Transport Protocol (HTTP) <a href="#RFC2818" class="xref">[RFC2818]</a>.  </p>
-<p id="rfc.section.1.p.5">Encrypting at the RPC transport layer accords several significant benefits: </p>
+<p id="rfc.section.1.p.6">The alternative described in the current document is to employ a transport layer security mechanism that can protect the confidentiality of each RPC connection transparently to RPC and upper-layer protocols.  The Transport Layer Security protocol <a href="#RFC8446" class="xref">[RFC8446]</a> (TLS) is a well-established Internet building block that protects many standard Internet protocols such as the Hypertext Transport Protocol (HTTP) <a href="#RFC2818" class="xref">[RFC2818]</a>.  </p>
+<p id="rfc.section.1.p.7">Encrypting at the RPC transport layer accords several significant benefits: </p>
 
 <dl>
 <dt>Encryption By Default:</dt>
@@ -589,9 +591,9 @@
 </dl>
 
 <p> </p>
-<p id="rfc.section.1.p.6">The current document specifies the implementation of RPC on an encrypted transport in a manner that is transparent to upper-layer protocols based on RPC.  The imposition of encryption at the transport layer protects any upper-layer protocol that employs RPC, without alteration of that protocol.  </p>
-<p id="rfc.section.1.p.7">Further, <a href="#section:2AE49383-E6B2-4830-8407-995FEBF727F2" class="xref">Section 7</a> of the current document defines policies in line with <a href="#RFC7435" class="xref">[RFC7435]</a> which enable RPC-on-TLS to be deployed opportunistically in environments that contain RPC implementations that do not support TLS.  However, specifications for RPC-based upper-layer protocols should choose to require even stricter policies that guarantee encryption and host authentication is used for all RPC transactions.  Enforcing the use of RPC-on-TLS is of particular importance for existing upper-layer protocols whose security infrastructure is weak.  </p>
-<p id="rfc.section.1.p.8">The protocol specification in the current document assumes that support for RPC, TLS, PKI, GSS-API, and DNSSEC is already available in an RPC implementation where TLS support is to be added.  </p>
+<p id="rfc.section.1.p.8">The current document specifies the implementation of RPC on an encrypted transport in a manner that is transparent to upper-layer protocols based on RPC.  The imposition of encryption at the transport layer protects any upper-layer protocol that employs RPC, without alteration of that protocol.  </p>
+<p id="rfc.section.1.p.9">Further, <a href="#section:2AE49383-E6B2-4830-8407-995FEBF727F2" class="xref">Section 7</a> of the current document defines policies in line with <a href="#RFC7435" class="xref">[RFC7435]</a> which enable RPC-on-TLS to be deployed opportunistically in environments that contain RPC implementations that do not support TLS.  However, specifications for RPC-based upper-layer protocols should choose to require even stricter policies that guarantee encryption and host authentication is used for all RPC transactions.  Enforcing the use of RPC-on-TLS is of particular importance for existing upper-layer protocols whose security infrastructure is weak.  </p>
+<p id="rfc.section.1.p.10">The protocol specification in the current document assumes that support for RPC, TLS, PKI, GSS-API, and DNSSEC is already available in an RPC implementation where TLS support is to be added.  </p>
 <h1 id="rfc.section.2">
 <a href="#rfc.section.2">2.</a> <a href="#section:024237C9-5504-49B4-A2D3-2D2A5EFBB967" id="section:024237C9-5504-49B4-A2D3-2D2A5EFBB967">Requirements Language</a>
 </h1>
@@ -751,7 +753,8 @@
 <dt>Organization:</dt>
 <dd style="margin-left: 11">DESY </dd>
 <dt>URL:</dt>
-<dd style="margin-left: 11">https://desy.de </dd>
+<dd style="margin-left: 11">
+<a href="https://desy.de">https://desy.de </a> </dd>
 <dt>Maturity:</dt>
 <dd style="margin-left: 11">Implementation will be based on mature versions of the current document.  </dd>
 <dt>Coverage:</dt>
@@ -772,7 +775,8 @@
 <dt>Organization:</dt>
 <dd style="margin-left: 11">Hammerspace </dd>
 <dt>URL:</dt>
-<dd style="margin-left: 11">https://hammerspace.com </dd>
+<dd style="margin-left: 11">
+<a href="https://hammerspace.com">https://hammerspace.com </a> </dd>
 <dt>Maturity:</dt>
 <dd style="margin-left: 11">Prototype software based on early versions of this document.  </dd>
 <dt>Coverage:</dt>
@@ -793,7 +797,8 @@
 <dt>Organization:</dt>
 <dd style="margin-left: 11">The Linux Foundation </dd>
 <dt>URL:</dt>
-<dd style="margin-left: 11">https://www.kernel.org </dd>
+<dd style="margin-left: 11">
+<a href="https://www.kernel.org">https://www.kernel.org </a> </dd>
 <dt>Maturity:</dt>
 <dd style="margin-left: 11">Prototype software based on early versions of this document.  </dd>
 <dt>Coverage:</dt>
@@ -814,7 +819,8 @@
 <dt>Organization:</dt>
 <dd style="margin-left: 11">The FreeBSD Project </dd>
 <dt>URL:</dt>
-<dd style="margin-left: 11">https://www.freebsd.org </dd>
+<dd style="margin-left: 11">
+<a href="https://www.freebsd.org">https://www.freebsd.org </a> </dd>
 <dt>Maturity:</dt>
 <dd style="margin-left: 11">Prototype software based on early versions of this document.  </dd>
 <dt>Coverage:</dt>
