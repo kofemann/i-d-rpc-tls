@@ -419,7 +419,7 @@
 
   <meta name="dct.creator" content="Myklebust, T. and C. Lever, Ed." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-nfsv4-rpc-tls-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2020-20" />
+  <meta name="dct.issued" scheme="ISO8601" content="2020-22" />
   <meta name="dct.abstract" content="This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.   " />
   <meta name="description" content="This document describes a mechanism that, through the use of opportunistic Transport Layer Security (TLS), enables encryption of in-transit Remote Procedure Call (RPC) transactions while interoperating with ONC RPC implementations that do not support this mechanism.  This document updates RFC 5531.   " />
 
@@ -447,8 +447,8 @@
 <td class="right">Oracle</td>
 </tr>
 <tr>
-<td class="left">Expires: October 22, 2020</td>
-<td class="right">April 20, 2020</td>
+<td class="left">Expires: October 24, 2020</td>
+<td class="right">April 22, 2020</td>
 </tr>
 
     	
@@ -464,7 +464,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on October 22, 2020.</p>
+<p>This Internet-Draft will expire on October 24, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -616,7 +616,7 @@
 <p id="rfc.section.4.1.p.4">The length of the opaque data constituting the credential sent in the RPC Call message MUST be zero.  The verifier accompanying the credential MUST be an AUTH_NONE verifier of length zero.  </p>
 <p id="rfc.section.4.1.p.5">The flavor value of the verifier in the RPC Reply message received from the server MUST be AUTH_NONE.  The length of the verifier's body field is eight.  The bytes of the verifier's body field encode the ASCII characters "STARTTLS" as a fixed-length opaque.  </p>
 <p id="rfc.section.4.1.p.6">If the RPC server replies with a reply_stat of MSG_ACCEPTED and an AUTH_NONE verifier containing the "STARTTLS" token, the RPC client follows with a "ClientHello" message.  The client MAY proceed with TLS session establishment even if the Reply's accept_stat is not SUCCESS (for example, if the accept_stat is PROG_UNAVAIL).  Once the TLS handshake is complete, the RPC client and server have established a secure channel for communicating.  </p>
-<p id="rfc.section.4.1.p.7">If the Reply's reply_stat is MSG_ACCEPTED but the verifier does not contain the "STARTTLS" token, or if the Reply's reply_stat is MSG_DENIED, the RPC client MUST NOT send a "ClientHello" message.  RPC operation can continue, but in the clear.  </p>
+<p id="rfc.section.4.1.p.7">If the Reply's reply_stat is MSG_ACCEPTED but the verifier does not contain the "STARTTLS" token, or if the Reply's reply_stat is MSG_DENIED, the RPC client MUST NOT send a "ClientHello" message.  RPC operation can continue, however it will be without any confidentiality, integrity or authentication protection from (D)TLS.  </p>
 <p id="rfc.section.4.1.p.8">If, after a successful RPC AUTH_TLS probe, the subsequent TLS handshake should fail for any reason, the RPC client reports this failure to the upper-layer application the same way it reports an AUTH_ERROR rejection from the RPC server.  </p>
 <p id="rfc.section.4.1.p.9">If an RPC client uses the AUTH_TLS authentication flavor on any procedure other than the NULL procedure, or an RPC client sends an RPC AUTH_TLS probe within an existing TLS session, the RPC server MUST reject that RPC Call by setting the reply_stat field to MSG_DENIED, the reject_stat field to AUTH_ERROR, and the auth_stat field to AUTH_BADCRED.  </p>
 <h1 id="rfc.section.4.2">
@@ -640,21 +640,21 @@
 <a href="#rfc.section.4.2.1">4.2.1.</a> <a href="#section:12D92596-F310-48C8-A4E0-B6CA038524E5" id="section:12D92596-F310-48C8-A4E0-B6CA038524E5">Using TLS with RPCSEC GSS</a>
 </h1>
 <p id="rfc.section.4.2.1.p.1">To use GSS, an RPC server has to possess a GSS service principal.  On a TLS session, GSS mutual (peer) authentication occurs as usual, but only after a TLS session has been established for communication.  Authentication of GSS users is unchanged by the use of TLS.  </p>
-<p id="rfc.section.4.2.1.p.2">RPCSEC GSS can also protect per-request integrity or confidentiality.  When operating over a TLS session, these GSS services become redundant.  An RPC implementation capable of concurrently using TLS and RPCSEC GSS can use GSS channel binding, as defined in <a href="#RFC5056" class="xref">[RFC5056]</a>, to determine when an underlying transport provides a sufficient degree of confidentiality.  Channel bindings for the TLS channel type are defined in <a href="#RFC5929" class="xref">[RFC5929]</a>.  </p>
+<p id="rfc.section.4.2.1.p.2">RPCSEC GSS can also perform per-request integrity or confidentiality protection.  When operating over a TLS session, these GSS services become redundant.  An RPC implementation capable of concurrently using TLS and RPCSEC GSS can use GSS channel binding, as defined in <a href="#RFC5056" class="xref">[RFC5056]</a>, to determine when an underlying transport provides a sufficient degree of confidentiality.  Channel bindings for the TLS channel type are defined in <a href="#RFC5929" class="xref">[RFC5929]</a>.  </p>
 <h1 id="rfc.section.5">
 <a href="#rfc.section.5">5.</a> <a href="#section:D93526DA-7B9D-419B-BE84-4AD8DA48577E" id="section:D93526DA-7B9D-419B-BE84-4AD8DA48577E">TLS Requirements</a>
 </h1>
 <p id="rfc.section.5.p.1">When peers negotiate a TLS session that is to transport RPC, the following restrictions apply: </p>
 
 <ul>
-<li>Implementations MUST NOT negotiate TLS versions prior to v1.3 (<a href="#RFC8446" class="xref">[RFC8446]</a> or <a href="#I-D.ietf-tls-dtls13" class="xref">[I-D.ietf-tls-dtls13]</a>).  Support for mandatory-to-implement ciphersuites for the negotiated TLS version is REQUIRED.  </li>
+<li>Implementations MUST NOT negotiate TLS versions prior to v1.3 (for TLS <a href="#RFC8446" class="xref">[RFC8446]</a> or DTLS <a href="#I-D.ietf-tls-dtls13" class="xref">[I-D.ietf-tls-dtls13]</a> respectively).  Support for mandatory-to-implement ciphersuites for the negotiated TLS version is REQUIRED.  </li>
 <li>Implementations MUST support certificate-based mutual authentication.  Support for TLS-PSK mutual authentication <a href="#RFC4279" class="xref">[RFC4279]</a> is OPTIONAL.  See <a href="#section:6EDEF553-C95A-47D7-ABBA-0B537FE3A959" class="xref">Section 4.2</a> for further details.  </li>
 <li>Negotiation of a ciphersuite providing confidentiality as well as integrity protection is REQUIRED.  Support for and negotiation of compression is OPTIONAL.  </li>
 </ul>
 
 <p> </p>
-<p id="rfc.section.5.p.2">Client implementations MUST include the "application_layer_protocol_negotiation(16)" extension in their "ClientHello" message and MUST include the protocol identifier defined in <a href="#section:58905D7A-06B1-4469-964A-DAC607DAC500" class="xref">Section 8.2</a> in that message's ProtocolNameList value.  </p>
-<p id="rfc.section.5.p.3">Similary, in response to the "ClientHello" message, server implementations MUST include the "application_layer_protocol_negotiation(16)" extension in their "ServerHello" message and MUST include only the protocol identifier defined in <a href="#section:58905D7A-06B1-4469-964A-DAC607DAC500" class="xref">Section 8.2</a> in that message's ProtocolNameList value.  </p>
+<p id="rfc.section.5.p.2">Client implementations MUST include the "application_layer_protocol_negotiation(16)" extension <a href="#RFC7301" class="xref">[RFC7301]</a> in their "ClientHello" message and MUST include the protocol identifier defined in <a href="#section:58905D7A-06B1-4469-964A-DAC607DAC500" class="xref">Section 8.2</a> in that message's ProtocolNameList value.  </p>
+<p id="rfc.section.5.p.3">Similary, in response to the "ClientHello" message, server implementations MUST include the "application_layer_protocol_negotiation(16)" extension <a href="#RFC7301" class="xref">[RFC7301]</a> in their "ServerHello" message and MUST include only the protocol identifier defined in <a href="#section:58905D7A-06B1-4469-964A-DAC607DAC500" class="xref">Section 8.2</a> in that message's ProtocolNameList value.  </p>
 <p id="rfc.section.5.p.4">If the server responds incorrectly, the client MUST NOT establish a TLS session for use with RPC on this connection.  See <a href="#RFC7301" class="xref">[RFC7301]</a> for further details about how to form these messages properly.  </p>
 <h1 id="rfc.section.5.1">
 <a href="#rfc.section.5.1">5.1.</a> <a href="#section:CC204592-F561-49BD-B1C9-DE0FF7F0E7AB" id="section:CC204592-F561-49BD-B1C9-DE0FF7F0E7AB">Base Transport Considerations</a>
